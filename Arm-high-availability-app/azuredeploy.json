@@ -39,12 +39,12 @@
     "Arm-high-availability-app-vnetLanName": "LAN",
     "Arm-high-availability-app-vnetLanPrefix": "10.0.1.0/24",
 
-    "Arm-high-avalibility-app-ad01Name": "[concat(resourceGroup().name,'-', 'Ad01')]",
+    "Arm-high-avalibility-app-ad01Name": "[concat(resourceGroup().name,'-', 'ad01')]",
     "Arm-high-avalibility-app-ad01storageName": "[toLower(replace(concat('AHAA', substring(resourceGroup().name, lastIndexOf(resourceGroup().name, '-')), 'ad01', 'storage'), '-', ''))]",
     "Arm-high-avalibility-app-ad01ImagePublisher": "MicrosoftWindowsServer",
     "Arm-high-avalibility-app-ad01ImageOffer": "WindowsServer",
     "Arm-high-avalibility-app-ad01OSDiskName": "[concat(variables('Arm-high-avalibility-app-ad01Name'), '-', 'osdisk')]",
-    "Arm-high-avalibility-app-ad01VmSize": "Standard_D2_v2",
+    "Arm-high-avalibility-app-ad01VmSize": "Standard_A1_v2",
     "Arm-high-avalibility-app-ad01VnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'Arm-high-availability-app-vnet')]",
     "Arm-high-avalibility-app-ad01SubnetRef": "[concat(variables('Arm-high-avalibility-app-ad01VnetID'), '/subnets/', variables('Arm-high-availability-app-vnetLanName'))]",
     "Arm-high-avalibility-app-ad01StorageAccountContainerName": "vhds",
@@ -95,6 +95,77 @@
         "displayName": "Arm-high-avalibility-app-ad01-storage"
       },
       "kind": "Storage"
+    },
+    {
+      "name": "[variables('Arm-high-avalibility-app-ad01NicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]"
+      ],
+      "tags": {
+        "displayName": "Arm-high-avalibility-app-ad01Nic"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('Arm-high-avalibility-app-ad01SubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('Arm-high-avalibility-app-ad01Name')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-avalibility-app-ad01-storageName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-avalibility-app-ad01NicName'))]"
+      ],
+      "tags": {
+        "displayName": "Arm-high-avalibility-app-ad01"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('Arm-high-avalibility-app-ad01VmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[variables('Arm-high-avalibility-app-ad01Name')]",
+          "adminUsername": "[parameters('Arm-high-avalibility-app-ad01AdminUsername')]",
+          "adminPassword": "[parameters('Arm-high-avalibility-app-ad01AdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('Arm-high-avalibility-app-ad01ImagePublisher')]",
+            "offer": "[variables('Arm-high-avalibility-app-ad01ImageOffer')]",
+            "sku": "[parameters('Arm-high-avalibility-app-ad01WindowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[variables('Arm-high-avalibility-app-ad01OSDiskName')]",
+            "vhd": {
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-avalibility-app-ad01-storageName')), '2016-01-01').primaryEndpoints.blob, variables('Arm-high-avalibility-app-ad01StorageAccountContainerName'), '/', variables('Arm-high-avalibility-app-ad01OSDiskName'), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-avalibility-app-ad01NicName'))]"
+            }
+          ]
+        }
+      }
     }
   ],
   "outputs": {
