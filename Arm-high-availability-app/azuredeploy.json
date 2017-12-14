@@ -40,7 +40,7 @@
     "Arm-high-availability-app-vnetLanPrefix": "10.0.1.0/24",
 
     "Arm-high-avalibility-app-ad01Name": "[concat(resourceGroup().name,'-', 'Ad01')]",
-    "Arm-high-avalibility-app-ad01-storageName": "[concat(replace(variables('Arm-high-avalibility-app-ad01Name'), '-',''), 'storage')]",
+    "Arm-high-avalibility-app-ad01-storageName": "[concat(resourceGroup().id, 'ad01', 'storage')]",
     "Arm-high-avalibility-app-ad01ImagePublisher": "MicrosoftWindowsServer",
     "Arm-high-avalibility-app-ad01ImageOffer": "WindowsServer",
     "Arm-high-avalibility-app-ad01OSDiskName": "[concat(variables('Arm-high-avalibility-app-ad01Name'), '-', 'osdisk')]",
@@ -81,6 +81,20 @@
           }
         ]
       }
+    },
+    {
+      "name": "[variables('Arm-high-avalibility-app-ad01-storageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[parameters('Arm-high-avalibility-app-ad01-storageType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "Arm-high-avalibility-app-ad01-storage"
+      },
+      "kind": "Storage"
     }
   ],
   "outputs": {
