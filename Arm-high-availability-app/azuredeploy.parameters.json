@@ -2,10 +2,10 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "Arm-high-avalibility-app-dc01AdminUserName": {
+    "Arm-high-availability-app-dc01AdminUserName": {
       "value": "EmrAdmin"
     },
-    "Arm-high-avalibility-app-dc01AdminPassword": {
+    "Arm-high-availability-app-dc01AdminPassword": {
       "value": ""
     }
   }
