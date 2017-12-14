@@ -1,8 +1,171 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {},
-  "variables": {},
-  "resources": [],
+  "parameters": {
+    "Arm-high-avalibility-app-ad01-storageType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "Arm-high-avalibility-app-ad01AdminUserName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "Arm-high-avalibility-app-ad01AdminPassword": {
+      "type": "securestring"
+    },
+    "Arm-high-avalibility-app-ad01WindowsOSVersion": {
+      "type": "string",
+      "defaultValue": "2012-R2-Datacenter",
+      "allowedValues": [
+        "2008-R2-SP1",
+        "2012-Datacenter",
+        "2012-R2-Datacenter",
+        "Windows-Server-Technical-Preview"
+      ]
+    }
+  },
+  "variables": {
+    "Arm-high-availability-app-vnetName": "[concat(resourceGroup().name,'-', 'vnet')]",
+    "Arm-high-availability-app-vnetPrefix": "10.0.0.0/16",
+    "Arm-high-availability-app-vnetDmzName": "DMZ",
+    "Arm-high-availability-app-vnetDmzPrefix": "10.0.0.0/24",
+    "Arm-high-availability-app-vnetLanName": "LAN",
+    "Arm-high-availability-app-vnetLanPrefix": "10.0.1.0/24",
+
+    "Arm-high-avalibility-app-ad01Name": "[concat(resourceGroup().name,'-', 'Ad01')]",
+    "Arm-high-avalibility-app-ad01-storageName": "[concat(replace(variables('Arm-high-avalibility-app-ad01Name'), '-',''), 'storage')]",
+    "Arm-high-avalibility-app-ad01ImagePublisher": "MicrosoftWindowsServer",
+    "Arm-high-avalibility-app-ad01ImageOffer": "WindowsServer",
+    "Arm-high-avalibility-app-ad01OSDiskName": "[concat(variables('Arm-high-avalibility-app-ad01Name'), '-', 'osdisk')]",
+    "Arm-high-avalibility-app-ad01VmSize": "Standard_D2_v2",
+    "Arm-high-avalibility-app-ad01VnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'Arm-high-availability-app-vnet')]",
+    "Arm-high-avalibility-app-ad01SubnetRef": "[concat(variables('Arm-high-avalibility-app-ad01VnetID'), '/subnets/', variables('Arm-high-availability-app-vnetLanName'))]",
+    "Arm-high-avalibility-app-ad01StorageAccountContainerName": "vhds",
+    "Arm-high-avalibility-app-ad01NicName": "[concat(variables('Arm-high-avalibility-app-ad01Name'), '-', 'nic01')]"
+  },
+  "resources": [
+    {
+      "name": "[variables('Arm-high-avalibility-app-ad01-storageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[parameters('Arm-high-avalibility-app-ad01-storageType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "Arm-high-avalibility-app-ad01-storage"
+      },
+      "kind": "Storage"
+    },
+    {
+      "name": "[variables('Arm-high-availability-app-vnetName')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "Arm-high-availability-app-vnet"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('Arm-high-availability-app-vnetPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('Arm-high-availability-app-vnetDmzName')]",
+            "properties": {
+              "addressPrefix": "[variables('Arm-high-availability-app-vnetDmzPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('Arm-high-availability-app-vnetLanName')]",
+            "properties": {
+              "addressPrefix": "[variables('Arm-high-availability-app-vnetLanPrefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('Arm-high-avalibility-app-ad01NicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', 'Arm-high-availability-app-vnet')]"
+      ],
+      "tags": {
+        "displayName": "Arm-high-avalibility-app-ad01Nic"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('Arm-high-avalibility-app-ad01SubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('Arm-high-avalibility-app-ad01Name')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-avalibility-app-ad01-storageName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-avalibility-app-ad01NicName'))]"
+      ],
+      "tags": {
+        "displayName": "Arm-high-avalibility-app-ad01"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('Arm-high-avalibility-app-ad01VmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[variables('Arm-high-avalibility-app-ad01Name')]",
+          "adminUsername": "[parameters('Arm-high-avalibility-app-ad01AdminUsername')]",
+          "adminPassword": "[parameters('Arm-high-avalibility-app-ad01AdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('Arm-high-avalibility-app-ad01ImagePublisher')]",
+            "offer": "[variables('Arm-high-avalibility-app-ad01ImageOffer')]",
+            "sku": "[parameters('Arm-high-avalibility-app-ad01WindowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[variables('Arm-high-avalibility-app-ad01OSDiskName')]",
+            "vhd": {
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-avalibility-app-ad01-storageName')), '2016-01-01').primaryEndpoints.blob, variables('Arm-high-avalibility-app-ad01StorageAccountContainerName'), '/', variables('Arm-high-avalibility-app-ad01OSDiskName'), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-avalibility-app-ad01NicName'))]"
+            }
+          ]
+        }
+      }
+    }],
   "outputs": {}
 }
