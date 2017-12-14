@@ -52,19 +52,44 @@
   },
   "resources": [
     {
-      "name": "[variables('Arm-high-avalibility-app-ad01-storageName')]",
-      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('Arm-high-availability-app-vnetName')]",
+      "type": "Microsoft.Network/virtualNetworks",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2016-01-01",
-      "sku": {
-        "name": "[parameters('Arm-high-avalibility-app-ad01-storageType')]"
-      },
+      "apiVersion": "2016-03-30",
       "dependsOn": [],
       "tags": {
-        "displayName": "Arm-high-avalibility-app-ad01-storage"
+        "displayName": "Arm-high-availability-app-vnet"
       },
-      "kind": "Storage"
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('Arm-high-availability-app-vnetPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('Arm-high-availability-app-vnetDmzName')]",
+            "properties": {
+              "addressPrefix": "[variables('Arm-high-availability-app-vnetDmzPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('Arm-high-availability-app-vnetLanName')]",
+            "properties": {
+              "addressPrefix": "[variables('Arm-high-availability-app-vnetLanPrefix')]"
+            }
+          }
+        ]
+      }
     }
-    ],
-  "outputs": {}
+  ],
+  "outputs": {
+    "AD01": {
+      "type": "object",
+      "value": {
+        "storageName": "[variables('Arm-high-avalibility-app-ad01-storageName')]",
+        "storageType": "[parameters('Arm-high-avalibility-app-ad01-storageType')]"
+      }
+    }
+  }
 }
