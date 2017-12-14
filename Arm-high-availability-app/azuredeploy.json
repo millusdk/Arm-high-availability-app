@@ -102,7 +102,7 @@
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-03-30",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', 'Arm-high-availability-app-vnet')]"
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]"
       ],
       "tags": {
         "displayName": "Arm-high-avalibility-app-ad01Nic"
