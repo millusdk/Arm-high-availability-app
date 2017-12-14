@@ -40,7 +40,7 @@
     "Arm-high-availability-app-vnetLanPrefix": "10.0.1.0/24",
 
     "Arm-high-avalibility-app-ad01Name": "[concat(resourceGroup().name,'-', 'Ad01')]",
-    "Arm-high-avalibility-app-ad01-storageName": "[replace(concat('AHAA', substring(resourceGroup().name, lastIndexOf(resourceGroup().name, '-')), 'ad01', 'storage'), '-', '')]",
+    "Arm-high-avalibility-app-ad01-storageName": "[toLower(replace(concat('AHAA', substring(resourceGroup().name, lastIndexOf(resourceGroup().name, '-')), 'ad01', 'storage'), '-', ''))]",
     "Arm-high-avalibility-app-ad01ImagePublisher": "MicrosoftWindowsServer",
     "Arm-high-avalibility-app-ad01ImageOffer": "WindowsServer",
     "Arm-high-avalibility-app-ad01OSDiskName": "[concat(variables('Arm-high-avalibility-app-ad01Name'), '-', 'osdisk')]",
