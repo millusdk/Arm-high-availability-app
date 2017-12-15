@@ -99,7 +99,9 @@
       "name": "dc01",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-09-01",
-      "dependsOn": [ ],
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]"
+      ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -115,9 +117,6 @@
           },
           "Arm-high-availability-app-vnetLanName": {
             "value": "[variables('Arm-high-availability-app-vnetLanName')]"
-          },
-          "Arm-high-availability-app-vnetName": {
-            "value": "[variables('Arm-high-availability-app-vnetName')]"
           },
 
           "Arm-high-availability-app-dc01storageType": {

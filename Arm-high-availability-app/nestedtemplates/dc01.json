@@ -10,10 +10,7 @@
     },
     "Arm-high-availability-app-vnetLanName": {
       "type": "string"
-    },
-    "Arm-high-availability-app-vnetName": {
-      "type": "string"
-    },
+    },,
 
     "Arm-high-availability-app-dc01storageType": {
       "type": "string",
@@ -75,9 +72,7 @@
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-03-30",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', parameters('Arm-high-availability-app-vnetName'))]"
-      ],
+      "dependsOn": [ ],
       "tags": {
         "displayName": "Arm-high-availability-app-dc01Nic"
       },
