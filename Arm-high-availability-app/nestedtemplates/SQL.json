@@ -1,0 +1,132 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "Arm-high-availability-app-baseName": {
+      "type": "string"
+    },
+    "Arm-high-availability-app-vnetID": {
+      "type": "string"
+    },
+    "Arm-high-availability-app-vnetLanName": {
+      "type": "string"
+    },
+
+    "Arm-high-availability-app-storageType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "Arm-high-availability-app-adminUserName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "Arm-high-availability-app-adminPassword": {
+      "type": "securestring"
+    }
+  },
+  "variables": {
+    "Arm-high-availability-app-sql01Name": "[concat(parameters('Arm-high-availability-app-baseName'),'-', 'sql01')]",
+    "Arm-high-availability-app-sql01storageName": "[replace(concat(variables('Arm-high-availability-app-sql01Name'), 'storage'), '-', '')]",
+    "Arm-high-availability-app-sql01ImagePublisher": "MicrosoftSqlServer",
+    "Arm-high-availability-app-sql01ImageOffer": "SQL2016SP1-WS2016",
+    "Arm-high-availability-app-sql01OSDiskName": "[concat(variables('Arm-high-availability-app-sql01Name'), '-', 'osdisk')]",
+    "Arm-high-availability-app-sql01VmSize": "Standard_A1_v2",
+    "Arm-high-availability-app-sql01SubnetRef": "[concat(parameters('Arm-high-availability-app-vnetID'), '/subnets/', parameters('Arm-high-availability-app-vnetLanName'))]",
+    "Arm-high-availability-app-sql01StorageAccountContainerName": "vhds",
+    "Arm-high-availability-app-sql01NicName": "[concat(variables('Arm-high-availability-app-sql01Name'), '-', 'nic01')]",
+    "Arm-high-availability-app-sql01WindowsOSVersion": "SQLDEV" 
+  },
+  "resources": [
+    {
+      "name": "[variables('Arm-high-availability-app-sql01storageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[parameters('Arm-high-availability-app-storageType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "Arm-high-availability-app-sql01-storage"
+      },
+      "kind": "Storage"
+    },
+    {
+      "name": "[variables('Arm-high-availability-app-sql01NicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "Arm-high-availability-app-sql01Nic"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('Arm-high-availability-app-sql01SubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('Arm-high-availability-app-sql01Name')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-sql01storageName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-availability-app-sql01NicName'))]"
+      ],
+      "tags": {
+        "displayName": "Arm-high-availability-app-dc01"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('Arm-high-availability-app-sql01VmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[variables('Arm-high-availability-app-sql01Name')]",
+          "adminUsername": "[parameters('Arm-high-availability-app-adminUsername')]",
+          "adminPassword": "[parameters('Arm-high-availability-app-adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('Arm-high-availability-app-sql01ImagePublisher')]",
+            "offer": "[variables('Arm-high-availability-app-sql01ImageOffer')]",
+            "sku": "[variables('Arm-high-availability-app-sql01WindowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[variables('Arm-high-availability-app-sql01OSDiskName')]",
+            "vhd": {
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-sql01storageName')), '2016-01-01').primaryEndpoints.blob, variables('Arm-high-availability-app-sql01StorageAccountContainerName'), '/', variables('Arm-high-availability-app-sql01OSDiskName'), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-availability-app-sql01NicName'))]"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

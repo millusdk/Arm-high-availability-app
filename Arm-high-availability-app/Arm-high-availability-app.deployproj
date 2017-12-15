@@ -33,6 +33,7 @@
     <Content Include="Deploy-AzureResourceGroup.ps1" />
     <Content Include="nestedtemplates\dc01.json" />
     <Content Include="nestedtemplates\dc01.parameters.json" />
+    <None Include="nestedtemplates\sql.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
 </Project>

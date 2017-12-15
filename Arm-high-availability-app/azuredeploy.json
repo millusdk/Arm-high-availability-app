@@ -2,7 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "Arm-high-availability-app-dc01storageType": {
+    "Arm-high-availability-app-storageType": {
       "type": "string",
       "defaultValue": "Standard_LRS",
       "allowedValues": [
@@ -13,22 +13,16 @@
         "Premium_LRS"
       ]
     },
-    "Arm-high-availability-app-dc01AdminUserName": {
+    "Arm-high-availability-app-adminUserName": {
       "type": "string",
       "minLength": 1
     },
-    "Arm-high-availability-app-dc01AdminPassword": {
+    "Arm-high-availability-app-adminPassword": {
       "type": "securestring"
     },
-    "Arm-high-availability-app-dc01WindowsOSVersion": {
+    "Arm-high-availability-app-windowsOSVersion": {
       "type": "string",
-      "defaultValue": "2012-R2-Datacenter",
-      "allowedValues": [
-        "2008-R2-SP1",
-        "2012-Datacenter",
-        "2012-R2-Datacenter",
-        "Windows-Server-Technical-Preview"
-      ]
+      "defaultValue": "2016-Datacenter"
     },
     "_artifactsLocation": {
       "type": "string",
@@ -61,7 +55,8 @@
 
     "nestedTemplatefolder": "nestedtemplates",
 
-    "dc01TemplateFileName": "dc01.json"
+    "dc01TemplateFileName": "dc01.json",
+    "sqlTemplateFileName": "sql.json"
   },
   "resources": [
     {
@@ -120,16 +115,52 @@
           },
 
           "Arm-high-availability-app-dc01storageType": {
-            "value": "[parameters('Arm-high-availability-app-dc01storageType')]"
+            "value": "[parameters('Arm-high-availability-app-storageType')]"
           },
           "Arm-high-availability-app-dc01AdminUserName": {
-            "value": "[parameters('Arm-high-availability-app-dc01AdminUserName')]"
+            "value": "[parameters('Arm-high-availability-app-adminUserName')]"
           },
           "Arm-high-availability-app-dc01AdminPassword": {
-            "value": "[parameters('Arm-high-availability-app-dc01AdminPassword')]"
+            "value": "[parameters('Arm-high-availability-app-adminPassword')]"
           },
           "Arm-high-availability-app-dc01WindowsOSVersion": {
-            "value": "[parameters('Arm-high-availability-app-dc01WindowsOSVersion')]"
+            "value": "[parameters('Arm-high-availability-app-windowsOSVersion')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "sql01",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('nestedTemplatefolder'), '/', variables('sqlTemplateFileName'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "Arm-high-availability-app-baseName": {
+            "value": "[variables('Arm-high-availability-app-baseName')]"
+          },
+          "Arm-high-availability-app-vnetID": {
+            "value": "[variables('Arm-high-availability-app-vnetID')]"
+          },
+          "Arm-high-availability-app-vnetLanName": {
+            "value": "[variables('Arm-high-availability-app-vnetLanName')]"
+          },
+
+          "Arm-high-availability-app-storageType": {
+            "value": "[parameters('Arm-high-availability-app-storageType')]"
+          },
+          "Arm-high-availability-app-adminUserName": {
+            "value": "[parameters('Arm-high-availability-app-adminUserName')]"
+          },
+          "Arm-high-availability-app-adminPassword": {
+            "value": "[parameters('Arm-high-availability-app-adminPassword')]"
           }
         }
       }
