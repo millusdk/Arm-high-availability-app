@@ -10,7 +10,7 @@
     },
     "Arm-high-availability-app-vnetLanName": {
       "type": "string"
-    },,
+    },
 
     "Arm-high-availability-app-dc01storageType": {
       "type": "string",
