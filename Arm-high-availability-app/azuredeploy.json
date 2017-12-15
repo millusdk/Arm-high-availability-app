@@ -33,9 +33,6 @@
     "_artifactsLocation": {
       "type": "string",
       "defaultValue": "https://raw.githubusercontent.com/millusdk/Arm-high-availability-app/master"
-    },
-    "_artifactsLocationSasToken": {
-      "type": "securestring"
     }
   },
   "variables": {
@@ -62,9 +59,9 @@
       ]
     },
 
-    "dc01TemplateFolder": "nestedtemplates",
-    "dc01TemplateFileName": "dc01.json",
-    "dc01TemplateParametersFileName": "dc01.parameters.json"
+    "nestedTemplatefolder": "nestedtemplates",
+
+    "dc01TemplateFileName": "dc01.json"
   },
   "resources": [
     {
@@ -106,7 +103,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('dc01TemplateFolder'), '/', variables('dc01TemplateFileName'), parameters('_artifactsLocationSasToken'))]",
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('nestedTemplatefolder'), '/', variables('dc01TemplateFileName'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -143,10 +140,7 @@
     "dc01": {
       "type": "object",
       "value": {
-        "baseName": "[variables('Arm-high-availability-app-baseName')]",
-        "storageName": "[variables('Arm-high-availability-app-dc01storageName')]",
-        "storageType": "[parameters('Arm-high-availability-app-dc01storageType')]",
-        "vmName": "[variables('Arm-high-availability-app-dc01Name')]"
+        "baseName": "[variables('Arm-high-availability-app-baseName')]"
       }
     },
     "exampleObject": {
