@@ -32,7 +32,7 @@
     },
     "_artifactsLocation": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/millusdk/Arm-high-availability-app/master"
+      "defaultValue": "https://raw.githubusercontent.com/millusdk/Arm-high-availability-app/master/Arm-high-availability-app"
     }
   },
   "variables": {
