@@ -32,7 +32,7 @@
     }
   },
   "variables": {
-    "Arm-high-availability-app-baseName": "[toLower(concat('ahaa', substring(resourceGroup().name, lastIndexOf(resourceGroup().name, '-')))]",
+    "Arm-high-availability-app-baseName": "[toLower(concat('ahaa', substring(resourceGroup().name, lastIndexOf(resourceGroup().name, '-'))))]",
     "Arm-high-availability-app-vnetName": "[concat(variables('Arm-high-availability-app-baseName'),'-', 'vnet')]",
     "Arm-high-availability-app-vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]",
     "Arm-high-availability-app-vnetPrefix": "10.0.0.0/16",
@@ -173,6 +173,7 @@
     "dc01": {
       "type": "object",
       "value": {
+        "baseName": "[variables('Arm-high-availability-app-baseName')]",
         "storageName": "[variables('Arm-high-availability-app-dc01storageName')]",
         "storageType": "[parameters('Arm-high-availability-app-dc01storageType')]",
         "vmName": "[variables('Arm-high-availability-app-dc01Name')]",
