@@ -13,15 +13,7 @@
     },
 
     "Arm-high-availability-app-dc01storageType": {
-      "type": "string",
-      "defaultValue": "Standard_LRS",
-      "allowedValues": [
-        "Standard_LRS",
-        "Standard_ZRS",
-        "Standard_GRS",
-        "Standard_RAGRS",
-        "Premium_LRS"
-      ]
+      "type": "string"
     },
     "Arm-high-availability-app-dc01AdminUserName": {
       "type": "string",
@@ -31,14 +23,7 @@
       "type": "securestring"
     },
     "Arm-high-availability-app-dc01WindowsOSVersion": {
-      "type": "string",
-      "defaultValue": "2012-R2-Datacenter",
-      "allowedValues": [
-        "2008-R2-SP1",
-        "2012-Datacenter",
-        "2012-R2-Datacenter",
-        "Windows-Server-Technical-Preview"
-      ]
+      "type": "string"
     }
   },
   "variables": {
