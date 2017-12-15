@@ -33,6 +33,7 @@
   },
   "variables": {
     "Arm-high-availability-app-vnetName": "[concat(resourceGroup().name,'-', 'vnet')]",
+    "Arm-high-availability-app-vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]",
     "Arm-high-availability-app-vnetPrefix": "10.0.0.0/16",
     "Arm-high-availability-app-vnetDmzName": "DMZ",
     "Arm-high-availability-app-vnetDmzPrefix": "10.0.0.0/24",
@@ -45,8 +46,7 @@
     "Arm-high-availability-app-dc01ImageOffer": "WindowsServer",
     "Arm-high-availability-app-dc01OSDiskName": "[concat(variables('Arm-high-availability-app-dc01Name'), '-', 'osdisk')]",
     "Arm-high-availability-app-dc01VmSize": "Standard_A1_v2",
-    "Arm-high-availability-app-dc01VnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'Arm-high-availability-app-vnet')]",
-    "Arm-high-availability-app-dc01SubnetRef": "[concat(variables('Arm-high-availability-app-dc01VnetID'), '/subnets/', variables('Arm-high-availability-app-vnetLanName'))]",
+    "Arm-high-availability-app-dc01SubnetRef": "[concat(variables('Arm-high-availability-app-vnetID'), '/subnets/', variables('Arm-high-availability-app-vnetLanName'))]",
     "Arm-high-availability-app-dc01StorageAccountContainerName": "vhds",
     "Arm-high-availability-app-dc01NicName": "[concat(variables('Arm-high-availability-app-dc01Name'), '-', 'nic01')]"
   },
