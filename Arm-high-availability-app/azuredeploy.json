@@ -32,7 +32,8 @@
     }
   },
   "variables": {
-    "Arm-high-availability-app-vnetName": "[concat(resourceGroup().name,'-', 'vnet')]",
+    "Arm-high-availability-app-baseName": "[toLower(concat('ahaa', substring(resourceGroup().name, lastIndexOf(resourceGroup().name, '-')))]",
+    "Arm-high-availability-app-vnetName": "[concat(variables('Arm-high-availability-app-baseName'),'-', 'vnet')]",
     "Arm-high-availability-app-vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]",
     "Arm-high-availability-app-vnetPrefix": "10.0.0.0/16",
     "Arm-high-availability-app-vnetDmzName": "DMZ",
@@ -40,8 +41,8 @@
     "Arm-high-availability-app-vnetLanName": "LAN",
     "Arm-high-availability-app-vnetLanPrefix": "10.0.1.0/24",
 
-    "Arm-high-availability-app-dc01Name": "[concat(resourceGroup().name,'-', 'dc01')]",
-    "Arm-high-availability-app-dc01storageName": "[toLower(replace(concat('AHAA', substring(resourceGroup().name, lastIndexOf(resourceGroup().name, '-')), 'dc01', 'storage'), '-', ''))]",
+    "Arm-high-availability-app-dc01Name": "[concat(variables('Arm-high-availability-app-baseName'),'-', 'dc01')]",
+    "Arm-high-availability-app-dc01storageName": "[replace(concat(variables('Arm-high-availability-app-dc01Name'), 'storage'), '-', '')]",
     "Arm-high-availability-app-dc01ImagePublisher": "MicrosoftWindowsServer",
     "Arm-high-availability-app-dc01ImageOffer": "WindowsServer",
     "Arm-high-availability-app-dc01OSDiskName": "[concat(variables('Arm-high-availability-app-dc01Name'), '-', 'osdisk')]",
@@ -174,7 +175,20 @@
       "value": {
         "storageName": "[variables('Arm-high-availability-app-dc01storageName')]",
         "storageType": "[parameters('Arm-high-availability-app-dc01storageType')]",
-        "vmName": "[variables('Arm-high-availability-app-dc01Name')]"
+        "vmName": "[variables('Arm-high-availability-app-dc01Name')]",
+        "disk-array-on-object": {
+          "copy": [
+            {
+              "name": "disks",
+              "count": 5,
+              "input": {
+                "name": "[concat('myDataDisk', copyIndex('disks', 1))]",
+                "diskSizeGB": "1",
+                "diskIndex": "[copyIndex('disks')]"
+              }
+            }
+          ]
+        }
       }
     }
   }
