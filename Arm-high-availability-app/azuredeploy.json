@@ -49,7 +49,21 @@
     "Arm-high-availability-app-dc01VmSize": "Standard_A1_v2",
     "Arm-high-availability-app-dc01SubnetRef": "[concat(variables('Arm-high-availability-app-vnetID'), '/subnets/', variables('Arm-high-availability-app-vnetLanName'))]",
     "Arm-high-availability-app-dc01StorageAccountContainerName": "vhds",
-    "Arm-high-availability-app-dc01NicName": "[concat(variables('Arm-high-availability-app-dc01Name'), '-', 'nic01')]"
+    "Arm-high-availability-app-dc01NicName": "[concat(variables('Arm-high-availability-app-dc01Name'), '-', 'nic01')]",
+
+    "disk-array-on-object": {
+      "copy": [
+        {
+          "name": "disks",
+          "count": 5,
+          "input": {
+            "name": "[concat('myDataDisk', copyIndex('disks', 1))]",
+            "diskSizeGB": "1",
+            "diskIndex": "[copyIndex('disks')]"
+          }
+        }
+      ]
+    }
   },
   "resources": [
     {
@@ -176,21 +190,12 @@
         "baseName": "[variables('Arm-high-availability-app-baseName')]",
         "storageName": "[variables('Arm-high-availability-app-dc01storageName')]",
         "storageType": "[parameters('Arm-high-availability-app-dc01storageType')]",
-        "vmName": "[variables('Arm-high-availability-app-dc01Name')]",
-        "disk-array-on-object": {
-          "copy": [
-            {
-              "name": "disks",
-              "count": 5,
-              "input": {
-                "name": "[concat('myDataDisk', copyIndex('disks', 1))]",
-                "diskSizeGB": "1",
-                "diskIndex": "[copyIndex('disks')]"
-              }
-            }
-          ]
-        }
+        "vmName": "[variables('Arm-high-availability-app-dc01Name')]"
       }
+    },
+    "exampleObject": {
+      "value": "[variables('disk-array-on-object')]",
+      "type": "object"
     }
   }
 }
