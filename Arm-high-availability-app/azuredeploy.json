@@ -69,7 +69,7 @@
       "apiVersion": "2016-03-30",
       "dependsOn": [],
       "tags": {
-        "displayName": "Arm-high-availability-app-vnet"
+        "displayName": "Vnet"
       },
       "properties": {
         "addressSpace": {
@@ -100,7 +100,7 @@
       "apiVersion": "2015-06-15",
       "dependsOn": [],
       "tags": {
-        "displayName": "Arm-high-availability-app-dc-availability-set-name"
+        "displayName": "Domain controller availability set"
       },
       "properties": {
         "platformUpdateDomainCount": 2,
@@ -114,7 +114,7 @@
       "apiVersion": "2015-06-15",
       "dependsOn": [],
       "tags": {
-        "displayName": "Arm-high-availability-app-sql-availability-set-name"
+        "displayName": "Sql server availability set"
       },
       "properties": {
         "platformUpdateDomainCount": 3,
@@ -125,6 +125,9 @@
       "name": "dc01",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-09-01",
+      "tags": {
+        "displayName": "Primary domain controller"
+      },
       "dependsOn": [
         "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]",
         "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-dc-availability-set-name'))]"
@@ -165,9 +168,12 @@
       }
     },
     {
-      "name": "sql",
+      "name": "[concat('sql', copyIndex(1))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-09-01",
+      "tags": {
+        "displayName": "Sql servers"
+      },
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
         "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-sql-availability-set-name'))]"
