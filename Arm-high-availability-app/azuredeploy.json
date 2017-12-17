@@ -98,7 +98,7 @@
         "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]"
       ],
       "properties": {
-        "mode": "Complete",
+        "mode": "Incremental",
         "templateLink": {
           "uri": "[concat(parameters('_artifactsLocation'), '/', variables('nestedTemplatefolder'), '/', variables('dc01TemplateFileName'))]",
           "contentVersion": "1.0.0.0"
@@ -137,7 +137,7 @@
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]"
       ],
       "properties": {
-        "mode": "Complete",
+        "mode": "Incremental",
         "templateLink": {
           "uri": "[concat(parameters('_artifactsLocation'), '/', variables('nestedTemplatefolder'), '/', variables('sqlTemplateFileName'))]",
           "contentVersion": "1.0.0.0"
