@@ -42,20 +42,6 @@
   },
   "resources": [
     {
-      "name": "[parameters('Arm-high-availability-app-dc-availability-set-name')]",
-      "type": "Microsoft.Compute/availabilitySets",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
-      "dependsOn": [],
-      "tags": {
-        "displayName": "Domain controller availability set"
-      },
-      "properties": {
-        "platformUpdateDomainCount": 2,
-        "platformFaultDomainCount": 2
-      }
-    },
-    {
       "name": "[variables('Arm-high-availability-app-dc01storageName')]",
       "type": "Microsoft.Storage/storageAccounts",
       "location": "[resourceGroup().location]",
@@ -99,16 +85,15 @@
       "apiVersion": "2015-06-15",
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-dc01storageName'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-availability-app-dc01NicName'))]",
-        "[concat('Microsoft.Compute/availabilitySets', '/', parameters('Arm-high-availability-app-dc-availability-set-name'))]"
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-availability-app-dc01NicName'))]"
       ],
-      "availabilitySet": {
-        "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('Arm-high-availability-app-dc-availability-set-name'))]"
-      },
       "tags": {
         "displayName": "Arm-high-availability-app-dc01"
       },
       "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('Arm-high-availability-app-dc-availability-set-name'))]"
+        },
         "hardwareProfile": {
           "vmSize": "[variables('Arm-high-availability-app-dc01VmSize')]"
         },
