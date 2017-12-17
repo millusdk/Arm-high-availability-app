@@ -100,7 +100,7 @@
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-dc01storageName'))]",
         "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-availability-app-dc01NicName'))]",
-        "[resourceId('Microsoft.Compute/availabilitySets', parameters('Arm-high-availability-app-dc-availability-set-name'))]"
+        "[concat('Microsoft.Compute/availabilitySets', '/', parameters('Arm-high-availability-app-dc-availability-set-name'))]"
       ],
       "availabilitySet": {
         "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('Arm-high-availability-app-dc-availability-set-name'))]"
