@@ -40,7 +40,7 @@
     "Arm-high-availability-app-vnetLanPrefix": "10.0.1.0/24",
 
     "Arm-high-availability-app-dc-availability-set-name": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'dc', '-', 'availabilitySet')]",
-    "Arm-high-availability-app-sql-availability-set-name": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'dc', '-', 'availabilitySet')]",
+    "Arm-high-availability-app-sql-availability-set-name": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'sql', '-', 'availabilitySet')]",
 
     "disk-array-on-object": {
       "copy": [
