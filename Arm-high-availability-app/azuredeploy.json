@@ -98,7 +98,7 @@
         "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]"
       ],
       "properties": {
-        "mode": "Incremental",
+        "mode": "Complete",
         "templateLink": {
           "uri": "[concat(parameters('_artifactsLocation'), '/', variables('nestedTemplatefolder'), '/', variables('dc01TemplateFileName'))]",
           "contentVersion": "1.0.0.0"
@@ -130,14 +130,14 @@
       }
     },
     {
-      "name": "sql01",
+      "name": "sql",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-09-01",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]"
+        "[resourceId('Microsoft.Resources/deployments', 'dc01')]"
       ],
       "properties": {
-        "mode": "Incremental",
+        "mode": "Complete",
         "templateLink": {
           "uri": "[concat(parameters('_artifactsLocation'), '/', variables('nestedTemplatefolder'), '/', variables('sqlTemplateFileName'))]",
           "contentVersion": "1.0.0.0"
@@ -161,7 +161,10 @@
           },
           "Arm-high-availability-app-adminPassword": {
             "value": "[parameters('Arm-high-availability-app-adminPassword')]"
-          }
+          },
+          "Count": {
+            "value": 2 
+          } 
         }
       }
     }
