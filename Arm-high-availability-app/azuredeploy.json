@@ -127,7 +127,7 @@
       "apiVersion": "2016-09-01",
       "dependsOn": [
         "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]",
-        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-dc-availability-set-name'))"
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-dc-availability-set-name'))]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -170,7 +170,7 @@
       "apiVersion": "2016-09-01",
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
-        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-sql-availability-set-name'))"
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-sql-availability-set-name'))]"
       ],
       "properties": {
         "mode": "Incremental",
