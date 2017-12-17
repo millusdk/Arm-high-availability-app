@@ -24,7 +24,10 @@
     },
     "Arm-high-availability-app-dc01WindowsOSVersion": {
       "type": "string"
-    }
+    },
+    "Arm-high-availability-app-dc-availability-set-name": {
+      "type": "string"
+    } 
   },
   "variables": {
     "Arm-high-availability-app-dc01Name": "[concat(parameters('Arm-high-availability-app-baseName'),'-', 'dc01')]",
@@ -84,6 +87,9 @@
         "[resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-dc01storageName'))]",
         "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-availability-app-dc01NicName'))]"
       ],
+      "availabilitySet": {
+        "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('Arm-high-availability-app-dc-availability-set-name'))]"
+      },
       "tags": {
         "displayName": "Arm-high-availability-app-dc01"
       },

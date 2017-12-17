@@ -22,13 +22,16 @@
     "Arm-high-availability-app-adminPassword": {
       "type": "securestring"
     },
+    "Arm-high-availability-app-sql-availability-set-name": {
+      "type": "string"
+    },
     "Index": {
       "type": "int"
-    } 
+    }
   },
   "variables": {
-    "CopyIndex": "[padLeft(parameters('Index'), 2, '0')]",
-    "Arm-high-availability-app-sqlName": "[concat(parameters('Arm-high-availability-app-baseName'),'-', 'sql', variables('CopyIndex'))]",
+    "machineIndex": "[padLeft(parameters('Index'), 2, '0')]",
+    "Arm-high-availability-app-sqlName": "[concat(parameters('Arm-high-availability-app-baseName'),'-', 'sql', variables('machineIndex'))]",
     "Arm-high-availability-app-sqlstorageName": "[replace(concat(variables('Arm-high-availability-app-sqlName'), 'storage'), '-', '')]",
     "Arm-high-availability-app-sqlImagePublisher": "MicrosoftSqlServer",
     "Arm-high-availability-app-sqlImageOffer": "SQL2016SP1-WS2016",
@@ -86,8 +89,11 @@
         "[resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-sqlstorageName'))]",
         "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-availability-app-sqlNicName'))]"
       ],
+      "availabilitySet": {
+        "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('Arm-high-availability-app-sql-availability-set-name'))]"
+      },
       "tags": {
-        "displayName": "Arm-high-availability-app-dc01"
+        "displayName": "Arm-high-availability-app-sql"
       },
       "properties": {
         "hardwareProfile": {

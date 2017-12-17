@@ -39,6 +39,9 @@
     "Arm-high-availability-app-vnetLanName": "LAN",
     "Arm-high-availability-app-vnetLanPrefix": "10.0.1.0/24",
 
+    "Arm-high-availability-app-dc-availability-set-name": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'dc', '-', 'availabilitySet')]",
+    "Arm-high-availability-app-sql-availability-set-name": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'dc', '-', 'availabilitySet')]",
+
     "disk-array-on-object": {
       "copy": [
         {
@@ -91,11 +94,40 @@
       }
     },
     {
+      "name": "[variables('Arm-high-availability-app-dc-availability-set-name')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "Arm-high-availability-app-dc-availability-set-name"
+      },
+      "properties": {
+        "platformUpdateDomainCount": 2,
+        "platformFaultDomainCount": 2
+      }
+    },
+    {
+      "name": "[variables('Arm-high-availability-app-sql-availability-set-name')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "Arm-high-availability-app-sql-availability-set-name"
+      },
+      "properties": {
+        "platformUpdateDomainCount": 3,
+        "platformFaultDomainCount": 3
+      }
+    },
+    {
       "name": "dc01",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-09-01",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]"
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]",
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-dc-availability-set-name'))"
       ],
       "properties": {
         "mode": "Incremental",
@@ -125,6 +157,9 @@
           },
           "Arm-high-availability-app-dc01WindowsOSVersion": {
             "value": "[parameters('Arm-high-availability-app-windowsOSVersion')]"
+          },
+          "Arm-high-availability-app-dc-availability-set-name": {
+            "value": "[variables('Arm-high-availability-app-dc-availability-set-name')]"
           }
         }
       }
@@ -134,7 +169,8 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-09-01",
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'dc01')]"
+        "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-sql-availability-set-name'))"
       ],
       "properties": {
         "mode": "Incremental",
@@ -162,14 +198,17 @@
           "Arm-high-availability-app-adminPassword": {
             "value": "[parameters('Arm-high-availability-app-adminPassword')]"
           },
+          "Arm-high-availability-app-sql-availability-set-name": {
+            "value": "[variables('Arm-high-availability-app-sql-availability-set-name')]"
+          },
           "Index": {
             "value": "[copyIndex(1)]"
           }
-        },
-        "copy": {
-          "name": "sqlcopy",
-          "count": 2
-        } 
+        }
+      },
+      "copy": {
+        "name": "sqlcopy",
+        "count": 2
       }
     }
   ],
