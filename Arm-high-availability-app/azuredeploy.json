@@ -162,10 +162,14 @@
           "Arm-high-availability-app-adminPassword": {
             "value": "[parameters('Arm-high-availability-app-adminPassword')]"
           },
-          "Count": {
-            "value": 2 
-          } 
-        }
+          "Index": {
+            "value": "[copyIndex(1)]"
+          }
+        },
+        "copy": {
+          "name": "sqlcopy",
+          "count": 2
+        } 
       }
     }
   ],

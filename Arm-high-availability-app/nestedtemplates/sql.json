@@ -22,13 +22,13 @@
     "Arm-high-availability-app-adminPassword": {
       "type": "securestring"
     },
-    "Count": {
+    "Index": {
       "type": "int"
     } 
   },
   "variables": {
-    "CountIndex": "[padLeft(parameters('Count'), 2, '0')]",  
-    "Arm-high-availability-app-sqlName": "[concat(parameters('Arm-high-availability-app-baseName'),'-', 'sql', variables('CountIndex'))]",
+    "CopyIndex": "[padLeft(parameters('Index'), 2, '0')]",
+    "Arm-high-availability-app-sqlName": "[concat(parameters('Arm-high-availability-app-baseName'),'-', 'sql', variables('CopyIndex'))]",
     "Arm-high-availability-app-sqlstorageName": "[replace(concat(variables('Arm-high-availability-app-sqlName'), 'storage'), '-', '')]",
     "Arm-high-availability-app-sqlImagePublisher": "MicrosoftSqlServer",
     "Arm-high-availability-app-sqlImageOffer": "SQL2016SP1-WS2016",
