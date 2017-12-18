@@ -32,6 +32,7 @@
     </None>
     <Content Include="Deploy-AzureResourceGroup.ps1" />
     <Content Include="nestedtemplates\dc01.json" />
+    <None Include="Ensure-DeployStorageAccountExists.ps1" />
     <None Include="nestedtemplates\sql.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
