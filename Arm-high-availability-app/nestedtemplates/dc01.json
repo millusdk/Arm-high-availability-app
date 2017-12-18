@@ -42,7 +42,7 @@
       "metadata": {
         "description": "Auto-generated token to access _artifactsLocation"
       }
-    } 
+    }
   },
   "variables": {
     "Arm-high-availability-app-dc01Name": "[concat(parameters('Arm-high-availability-app-baseName'),'-', 'dc01')]",
@@ -145,7 +145,7 @@
       },
       "resources": [
         {
-          "name": "Microsoft.Powershell.DSC",
+          "name": "SetupActiveDirectory",
           "type": "extensions",
           "location": "[resourceGroup().location]",
           "apiVersion": "2015-06-15",
@@ -153,7 +153,8 @@
             "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-dc01Name'))]"
           ],
           "tags": {
-            "displayName": "SetupActiveDirectory"
+            "displayName": "SetupActiveDirectory",
+            "server": "[variables('Arm-high-availability-app-dc01Name')]"
           },
           "properties": {
             "publisher": "Microsoft.Powershell",
@@ -162,21 +163,20 @@
             "autoUpgradeMinorVersion": true,
             "settings": {
               "configuration": {
-                "url": "[concat(parameters('_artifactsLocation'), '/', variables('DSCFolder'), '/', 'DSCPackage.zip')]",
+                "url": "[concat(parameters('_artifactsLocation'), '/DSC/DSCPackage.zip')]",
                 "script": "SetupActiveDirectory.ps1",
                 "function": "SetupActiveDirectory"
               },
               "configurationArguments": {
-                "DomainName": "[parameters('domainName')]",
+                "DomainName": "[parameters('DomainName')]",
                 "AdminCreds": {
-                  "UserName": "[parameters('Arm-high-availability-app-dc01AdminUserName').username]",
+                  "UserName": "[parameters('Arm-high-availability-app-dc01AdminUserName')]",
                   "Password": "PrivateSettingsRef:AdminPassword"
                 }
               }
             },
             "protectedSettings": {
-              "configurationUrlSasToken": "[parameters('_artifactsLocationSasToken')]",
-              "AdminPassword": "[parameters('Arm-high-availability-app-dc01AdminPassword').password]"
+              "AdminPassword": "[parameters('Arm-high-availability-app-dc01AdminPassword')]"
             }
           }
         }
