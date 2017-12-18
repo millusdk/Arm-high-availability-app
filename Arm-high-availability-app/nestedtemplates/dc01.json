@@ -163,7 +163,7 @@
             "autoUpgradeMinorVersion": true,
             "settings": {
               "configuration": {
-                "url": "[concat(parameters('_artifactsLocation'), '/DSC/DSCPackage.zip')]",
+                "url": "[concat(parameters('_artifactsLocation'), '/DSC/DSCPackage.zip', parameters('_artefactsLocationSasToken'))]",
                 "script": "SetupActiveDirectory.ps1",
                 "function": "SetupActiveDirectory"
               },
