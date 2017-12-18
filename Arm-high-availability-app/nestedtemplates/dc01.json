@@ -137,7 +137,7 @@
           },
           "dataDisks": [
             {
-              "name": "[parameters('addServer').disks.data.name]",
+              "name": "[variables('Arm-high-availability-app-dc01DataDiskName')]",
               "vhd": {
                 "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-dc01storageName')), '2016-01-01').primaryEndpoints.blob, variables('Arm-high-availability-app-dc01StorageAccountContainerName'), '/', variables('Arm-high-availability-app-dc01DataDiskName'), '.vhd')]"
               },
