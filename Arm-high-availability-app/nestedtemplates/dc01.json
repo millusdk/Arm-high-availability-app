@@ -50,6 +50,7 @@
     "Arm-high-availability-app-dc01ImagePublisher": "MicrosoftWindowsServer",
     "Arm-high-availability-app-dc01ImageOffer": "WindowsServer",
     "Arm-high-availability-app-dc01OSDiskName": "[concat(variables('Arm-high-availability-app-dc01Name'), '-', 'osdisk')]",
+    "Arm-high-availability-app-dc01DataDiskName": "[concat(variables('Arm-high-availability-app-dc01Name'), '-', 'datadisk')]",
     "Arm-high-availability-app-dc01VmSize": "Standard_A1_v2",
     "Arm-high-availability-app-dc01SubnetRef": "[concat(parameters('Arm-high-availability-app-vnetID'), '/subnets/', parameters('Arm-high-availability-app-vnetLanName'))]",
     "Arm-high-availability-app-dc01StorageAccountContainerName": "vhds",
@@ -133,7 +134,19 @@
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          }
+          },
+          "dataDisks": [
+            {
+              "name": "[parameters('addServer').disks.data.name]",
+              "vhd": {
+                "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-dc01storageName')), '2016-01-01').primaryEndpoints.blob, variables('Arm-high-availability-app-dc01StorageAccountContainerName'), '/', variables('Arm-high-availability-app-dc01DataDiskName'), '.vhd')]"
+              },
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": "[parameters('addServer').disks.data.size]",
+              "lun": 0
+            }
+          ]
         },
         "networkProfile": {
           "networkInterfaces": [

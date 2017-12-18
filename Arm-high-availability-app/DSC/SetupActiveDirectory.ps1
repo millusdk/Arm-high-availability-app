@@ -27,7 +27,7 @@ configuration SetupActiveDirectory
             TestScript = { $false }
         }
 	
-	    <#WindowsFeature DNS 
+	    WindowsFeature DNS 
         { 
             Ensure = "Present" 
             Name = "DNS"		
@@ -93,6 +93,6 @@ configuration SetupActiveDirectory
         {
             ConfigurationMode = 'ApplyOnly'
             RebootNodeIfNeeded = $true
-        }#>
+        }
    }
 } 
