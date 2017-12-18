@@ -173,8 +173,14 @@
             "value": "[variables('Arm-high-availability-app-dc-availability-set-name')]"
           },
           "DomainName": {
-            "value" :  "[parameters('DomainName')]" 
-          } 
+            "value": "[parameters('DomainName')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
         }
       }
     },
