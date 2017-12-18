@@ -28,6 +28,10 @@
     "Arm-high-availability-app-dc-availability-set-name": {
       "type": "string"
     },
+    "Arm-high-availability-app-dc01VmSize": {
+      "type": "string",
+      "defaultValue": "Standard_A1_v2"
+    },
     "DomainName": {
       "type": "string"
     },
@@ -51,7 +55,6 @@
     "Arm-high-availability-app-dc01ImageOffer": "WindowsServer",
     "Arm-high-availability-app-dc01OSDiskName": "[concat(variables('Arm-high-availability-app-dc01Name'), '-', 'osdisk')]",
     "Arm-high-availability-app-dc01DataDiskName": "[concat(variables('Arm-high-availability-app-dc01Name'), '-', 'datadisk')]",
-    "Arm-high-availability-app-dc01VmSize": "Standard_A1_v2",
     "Arm-high-availability-app-dc01SubnetRef": "[concat(parameters('Arm-high-availability-app-vnetID'), '/subnets/', parameters('Arm-high-availability-app-vnetLanName'))]",
     "Arm-high-availability-app-dc01StorageAccountContainerName": "vhds",
     "Arm-high-availability-app-dc01NicName": "[concat(variables('Arm-high-availability-app-dc01Name'), '-', 'nic01')]",
@@ -113,7 +116,7 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('Arm-high-availability-app-dc-availability-set-name'))]"
         },
         "hardwareProfile": {
-          "vmSize": "[variables('Arm-high-availability-app-dc01VmSize')]"
+          "vmSize": "[parameters('Arm-high-availability-app-dc01VmSize')]"
         },
         "osProfile": {
           "computerName": "[variables('Arm-high-availability-app-dc01Name')]",
@@ -158,7 +161,7 @@
       },
       "resources": [
         {
-          "name": "SetupActiveDirectory",
+          "name": "CreateAdForest",
           "type": "extensions",
           "location": "[resourceGroup().location]",
           "apiVersion": "2015-06-15",
@@ -166,7 +169,7 @@
             "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-dc01Name'))]"
           ],
           "tags": {
-            "displayName": "SetupActiveDirectory",
+            "displayName": "CreateAdForest",
             "server": "[variables('Arm-high-availability-app-dc01Name')]"
           },
           "properties": {
@@ -177,8 +180,8 @@
             "settings": {
               "configuration": {
                 "url": "[concat(parameters('_artifactsLocation'), '/DSC/DSCPackage.zip', parameters('_artifactsLocationSasToken'))]",
-                "script": "SetupActiveDirectory.ps1",
-                "function": "SetupActiveDirectory"
+                "script": "CreateAdForest.ps1",
+                "function": "CreateAdForest"
               },
               "configurationArguments": {
                 "DomainName": "[parameters('DomainName')]",

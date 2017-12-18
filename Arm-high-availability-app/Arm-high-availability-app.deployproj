@@ -33,10 +33,10 @@
     <Content Include="Deploy-AzureResourceGroup.ps1" />
     <Content Include="DSC\ConfigureIIS.ps1" />
     <Content Include="nestedtemplates\dc01.json" />
-    <Content Include="DSC\SetupActiveDirectory.ps1" />
     <None Include="DSC\cDisk\cDisk.psd1" />
     <None Include="DSC\cDisk\DSCResources\SAMPLE_cDiskNoRestart\SAMPLE_cDiskNoRestart.psm1" />
     <None Include="DSC\cDisk\DSCResources\SAMPLE_cDiskNoRestart\SAMPLE_cDiskNoRestart.schema.mof" />
+    <None Include="DSC\CreateAdForest.ps1" />
     <None Include="DSC\xActiveDirectory\DSCResources\MSFT_xADCommon\MSFT_xADCommon.ps1" />
     <None Include="DSC\xActiveDirectory\DSCResources\MSFT_xADCommon\MSFT_xADCommon.psm1" />
     <None Include="DSC\xActiveDirectory\DSCResources\MSFT_xADDomainController\MSFT_xADDomainController.psm1" />
@@ -106,6 +106,7 @@
     <None Include="DSC\xPendingReboot\xPendingReboot.psd1" />
     <None Include="DSC\xPendingReboot\xPendingReboot_Documentation.html" />
     <None Include="Ensure-DeployStorageAccountExists.ps1" />
+    <None Include="nestedtemplates\web.json" />
     <None Include="nestedtemplates\sql.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />

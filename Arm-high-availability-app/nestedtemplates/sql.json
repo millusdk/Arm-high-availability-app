@@ -22,6 +22,10 @@
     "Arm-high-availability-app-adminPassword": {
       "type": "securestring"
     },
+    "Arm-high-availability-app-sqlVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_A1_v2"
+    },
     "Arm-high-availability-app-sql-availability-set-name": {
       "type": "string"
     },
@@ -36,7 +40,6 @@
     "Arm-high-availability-app-sqlImagePublisher": "MicrosoftSqlServer",
     "Arm-high-availability-app-sqlImageOffer": "SQL2016SP1-WS2016",
     "Arm-high-availability-app-sqlOSDiskName": "[concat(variables('Arm-high-availability-app-sqlName'), '-', 'osdisk')]",
-    "Arm-high-availability-app-sqlVmSize": "Standard_A1_v2",
     "Arm-high-availability-app-sqlSubnetRef": "[concat(parameters('Arm-high-availability-app-vnetID'), '/subnets/', parameters('Arm-high-availability-app-vnetLanName'))]",
     "Arm-high-availability-app-sqlStorageAccountContainerName": "vhds",
     "Arm-high-availability-app-sqlNicName": "[concat(variables('Arm-high-availability-app-sqlName'), '-', 'nic01')]",
@@ -97,7 +100,7 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('Arm-high-availability-app-sql-availability-set-name'))]"
         },
         "hardwareProfile": {
-          "vmSize": "[variables('Arm-high-availability-app-sqlVmSize')]"
+          "vmSize": "[parameters('Arm-high-availability-app-sqlVmSize')]"
         },
         "osProfile": {
           "computerName": "[variables('Arm-high-availability-app-sqlName')]",

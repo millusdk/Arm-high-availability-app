@@ -1,4 +1,4 @@
-configuration SetupActiveDirectory 
+configuration CreateAdForest 
 { 
    param 
    ( 
