@@ -90,7 +90,8 @@
           {
             "name": "ipconfig1",
             "properties": {
-              "privateIPAllocationMethod": "Dynamic",
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "10.0.1.5",
               "subnet": {
                 "id": "[variables('Arm-high-availability-app-dc02SubnetRef')]"
               }
