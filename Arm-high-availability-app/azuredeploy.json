@@ -171,7 +171,10 @@
           },
           "Arm-high-availability-app-dc-availability-set-name": {
             "value": "[variables('Arm-high-availability-app-dc-availability-set-name')]"
-          }
+          },
+          "DomainName": {
+            "value" :  "[parameters('DomainName')]" 
+          } 
         }
       }
     },
