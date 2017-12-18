@@ -24,6 +24,9 @@
       "type": "string",
       "defaultValue": "2016-Datacenter"
     },
+    "DomainName": {
+      "type": "string"
+    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {

@@ -7,6 +7,9 @@
     },
     "Arm-high-availability-app-adminPassword": {
       "value": ""
+    },
+    "DomainName": {
+      "value": "domain.local"
     }
   }
 }

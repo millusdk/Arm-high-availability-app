@@ -27,6 +27,21 @@
     },
     "Arm-high-availability-app-dc-availability-set-name": {
       "type": "string"
+    },
+    "DomainName": {
+      "type": "string"
+    },
+    "_artifactsLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Auto-generated container in staging storage account to receive post-build staging folder upload"
+      }
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Auto-generated token to access _artifactsLocation"
+      }
     } 
   },
   "variables": {
@@ -38,7 +53,9 @@
     "Arm-high-availability-app-dc01VmSize": "Standard_A1_v2",
     "Arm-high-availability-app-dc01SubnetRef": "[concat(parameters('Arm-high-availability-app-vnetID'), '/subnets/', parameters('Arm-high-availability-app-vnetLanName'))]",
     "Arm-high-availability-app-dc01StorageAccountContainerName": "vhds",
-    "Arm-high-availability-app-dc01NicName": "[concat(variables('Arm-high-availability-app-dc01Name'), '-', 'nic01')]"
+    "Arm-high-availability-app-dc01NicName": "[concat(variables('Arm-high-availability-app-dc01Name'), '-', 'nic01')]",
+    "DSCFolder": "DSC",
+    "SetupActiveDirectoryArchiveFileName": "SetupActiveDirectory.zip"
   },
   "resources": [
     {
@@ -125,7 +142,46 @@
             }
           ]
         }
-      }
+      },
+      "resources": [
+        {
+          "name": "Microsoft.Powershell.DSC",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2016-03-30",
+          "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-dc01Name'))]"
+          ],
+          "tags": {
+            "displayName": "SetupActiveDirectory"
+          },
+          "properties": {
+            "publisher": "Microsoft.Powershell",
+            "type": "DSC",
+            "typeHandlerVersion": "2.9",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "configuration": {
+                "url": "[concat(parameters('_artifactsLocation'), '/', variables('DSCFolder'), '/', 'DSCPackage.zip')]",
+                "script": "SetupActiveDirectory.ps1",
+                "function": "Main"
+              },
+              "configurationArguments": {
+                "DomainName": "[parameters('domainName')]",
+                "AdminCreds": {
+                  "UserName": "[parameters('Arm-high-availability-app-dc01AdminUserName').username]",
+                  "Password": "PrivateSettingsRef:AdminPassword"
+                },
+                "nodeName": "[variables('Arm-high-availability-app-dc01Name')]"
+              }
+            },
+            "protectedSettings": {
+              "configurationUrlSasToken": "[parameters('_artifactsLocationSasToken')]",
+              "AdminPassword": "[parameters('Arm-high-availability-app-dc01AdminPassword').password]"
+            }
+          }
+        }
+      ]
     }
   ],
   "outputs": {}
