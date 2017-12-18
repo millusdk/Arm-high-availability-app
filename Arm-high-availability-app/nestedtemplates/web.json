@@ -8,7 +8,7 @@
     "Arm-high-availability-app-vnetID": {
       "type": "string"
     },
-    "Arm-high-availability-app-vnetLanName": {
+    "Arm-high-availability-app-vnetDmzName": {
       "type": "string"
     },
 
@@ -43,7 +43,7 @@
     "Arm-high-availability-app-webImagePublisher": "MicrosoftWindowsServer",
     "Arm-high-availability-app-webImageOffer": "WindowsServer",
     "Arm-high-availability-app-webOSDiskName": "[concat(variables('Arm-high-availability-app-webName'), '-', 'osdisk')]",
-    "Arm-high-availability-app-webSubnetRef": "[concat(parameters('Arm-high-availability-app-vnetID'), '/subnets/', parameters('Arm-high-availability-app-vnetLanName'))]",
+    "Arm-high-availability-app-webSubnetRef": "[concat(parameters('Arm-high-availability-app-vnetID'), '/subnets/', parameters('Arm-high-availability-app-vnetDmzName'))]",
     "Arm-high-availability-app-webStorageAccountContainerName": "vhds",
     "Arm-high-availability-app-webNicName": "[concat(variables('Arm-high-availability-app-webName'), '-', 'nic01')]"
   },

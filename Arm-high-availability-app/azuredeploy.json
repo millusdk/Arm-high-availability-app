@@ -75,6 +75,7 @@
     "nestedTemplatefolder": "nestedtemplates",
 
     "dc01TemplateFileName": "dc01.json",
+    "dc02TemplateFileName": "dc02.json",
     "sqlTemplateFileName": "sql.json",
     "webTemplateFileName": "web.json"
   },
@@ -208,7 +209,62 @@
       }
     },
     {
-      "name": "[concat('sql', copyIndex(1))]",
+      "name": "dc02",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]",
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-dc-availability-set-name'))]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('nestedTemplatefolder'), '/', variables('dc02TemplateFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "Arm-high-availability-app-baseName": {
+            "value": "[variables('Arm-high-availability-app-baseName')]"
+          },
+          "Arm-high-availability-app-vnetID": {
+            "value": "[variables('Arm-high-availability-app-vnetID')]"
+          },
+          "Arm-high-availability-app-vnetLanName": {
+            "value": "[variables('Arm-high-availability-app-vnetLanName')]"
+          },
+
+          "Arm-high-availability-app-dc02storageType": {
+            "value": "[parameters('Arm-high-availability-app-storageType')]"
+          },
+          "Arm-high-availability-app-dc02AdminUserName": {
+            "value": "[parameters('Arm-high-availability-app-adminUserName')]"
+          },
+          "Arm-high-availability-app-dc02AdminPassword": {
+            "value": "[parameters('Arm-high-availability-app-adminPassword')]"
+          },
+          "Arm-high-availability-app-dc02WindowsOSVersion": {
+            "value": "[parameters('Arm-high-availability-app-windowsOSVersion')]"
+          },
+          "Arm-high-availability-app-dc-availability-set-name": {
+            "value": "[variables('Arm-high-availability-app-dc-availability-set-name')]"
+          },
+          "Arm-high-availability-app-dc02VmSize": {
+            "value": "[parameters('Arm-high-availability-app-vmSize')]"
+          },
+          "DomainName": {
+            "value": "[parameters('DomainName')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "[concat('sql', padLeft(copyIndex(1), 2, '0'))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-09-01",
       "dependsOn": [
@@ -258,7 +314,7 @@
       }
     },
     {
-      "name": "[concat('web', copyIndex(1))]",
+      "name": "[concat('web', padLeft(copyIndex(1), 2, '0'))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-09-01",
       "dependsOn": [
@@ -278,8 +334,8 @@
           "Arm-high-availability-app-vnetID": {
             "value": "[variables('Arm-high-availability-app-vnetID')]"
           },
-          "Arm-high-availability-app-vnetLanName": {
-            "value": "[variables('Arm-high-availability-app-vnetLanName')]"
+          "Arm-high-availability-app-vnetDmzName": {
+            "value": "[variables('Arm-high-availability-app-vnetDmzName')]"
           },
 
           "Arm-high-availability-app-storageType": {

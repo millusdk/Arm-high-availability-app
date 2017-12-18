@@ -9,7 +9,7 @@ configuration CreateAdForest
         [System.Management.Automation.PSCredential]$Admincreds,
 
         [Int]$RetryCount=20,
-        [Int]$RetryIntervalSec=30
+        [Int]$RetryIntervalSec=60
     ) 
     
     Import-DscResource -ModuleName xActiveDirectory, xDisk, xNetworking, cDisk, PSDesiredStateConfiguration

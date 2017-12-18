@@ -1,0 +1,203 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "Arm-high-availability-app-baseName": {
+      "type": "string"
+    },
+    "Arm-high-availability-app-vnetID": {
+      "type": "string"
+    },
+    "Arm-high-availability-app-vnetLanName": {
+      "type": "string"
+    },
+
+    "Arm-high-availability-app-dc02storageType": {
+      "type": "string"
+    },
+    "Arm-high-availability-app-dc02AdminUserName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "Arm-high-availability-app-dc02AdminPassword": {
+      "type": "securestring"
+    },
+    "Arm-high-availability-app-dc02WindowsOSVersion": {
+      "type": "string"
+    },
+    "Arm-high-availability-app-dc-availability-set-name": {
+      "type": "string"
+    },
+    "Arm-high-availability-app-dc02VmSize": {
+      "type": "string",
+      "defaultValue": "Standard_A1_v2"
+    },
+    "DomainName": {
+      "type": "string"
+    },
+    "_artifactsLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Auto-generated container in staging storage account to receive post-build staging folder upload"
+      }
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Auto-generated token to access _artifactsLocation"
+      }
+    }
+  },
+  "variables": {
+    "Arm-high-availability-app-dc02Name": "[concat(parameters('Arm-high-availability-app-baseName'),'-', 'dc02')]",
+    "Arm-high-availability-app-dc02storageName": "[replace(concat(variables('Arm-high-availability-app-dc02Name'), 'storage'), '-', '')]",
+    "Arm-high-availability-app-dc02ImagePublisher": "MicrosoftWindowsServer",
+    "Arm-high-availability-app-dc02ImageOffer": "WindowsServer",
+    "Arm-high-availability-app-dc02OSDiskName": "[concat(variables('Arm-high-availability-app-dc02Name'), '-', 'osdisk')]",
+    "Arm-high-availability-app-dc02DataDiskName": "[concat(variables('Arm-high-availability-app-dc02Name'), '-', 'datadisk')]",
+    "Arm-high-availability-app-dc02SubnetRef": "[concat(parameters('Arm-high-availability-app-vnetID'), '/subnets/', parameters('Arm-high-availability-app-vnetLanName'))]",
+    "Arm-high-availability-app-dc02StorageAccountContainerName": "vhds",
+    "Arm-high-availability-app-dc02NicName": "[concat(variables('Arm-high-availability-app-dc02Name'), '-', 'nic02')]",
+    "DSCFolder": "DSC",
+    "SetupActiveDirectoryArchiveFileName": "SetupActiveDirectory.zip"
+  },
+  "resources": [
+    {
+      "name": "[variables('Arm-high-availability-app-dc02storageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[parameters('Arm-high-availability-app-dc02storageType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "Arm-high-availability-app-dc02-storage"
+      },
+      "kind": "Storage"
+    },
+    {
+      "name": "[variables('Arm-high-availability-app-dc02NicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "Arm-high-availability-app-dc02Nic"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('Arm-high-availability-app-dc02SubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('Arm-high-availability-app-dc02Name')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-dc02storageName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-availability-app-dc02NicName'))]"
+      ],
+      "tags": {
+        "displayName": "Arm-high-availability-app-dc02"
+      },
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('Arm-high-availability-app-dc-availability-set-name'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('Arm-high-availability-app-dc02VmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[variables('Arm-high-availability-app-dc02Name')]",
+          "adminUsername": "[parameters('Arm-high-availability-app-dc02AdminUsername')]",
+          "adminPassword": "[parameters('Arm-high-availability-app-dc02AdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('Arm-high-availability-app-dc02ImagePublisher')]",
+            "offer": "[variables('Arm-high-availability-app-dc02ImageOffer')]",
+            "sku": "[parameters('Arm-high-availability-app-dc02WindowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[variables('Arm-high-availability-app-dc02OSDiskName')]",
+            "vhd": {
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-dc02storageName')), '2016-01-01').primaryEndpoints.blob, variables('Arm-high-availability-app-dc02StorageAccountContainerName'), '/', variables('Arm-high-availability-app-dc02OSDiskName'), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          },
+          "dataDisks": [
+            {
+              "name": "[variables('Arm-high-availability-app-dc02DataDiskName')]",
+              "vhd": {
+                "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-dc02storageName')), '2016-01-01').primaryEndpoints.blob, variables('Arm-high-availability-app-dc02StorageAccountContainerName'), '/', variables('Arm-high-availability-app-dc02DataDiskName'), '.vhd')]"
+              },
+              "caching": "None",
+              "createOption": "Empty",
+              "diskSizeGB": "15",
+              "lun": 0
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-availability-app-dc02NicName'))]"
+            }
+          ]
+        }
+      },
+      "resources": [
+        {
+          "name": "CreateSecondaryDc",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-06-15",
+          "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-dc02Name'))]"
+          ],
+          "tags": {
+            "displayName": "CreateSecondaryDc",
+            "server": "[variables('Arm-high-availability-app-dc02Name')]"
+          },
+          "properties": {
+            "publisher": "Microsoft.Powershell",
+            "type": "DSC",
+            "typeHandlerVersion": "2.9",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "configuration": {
+                "url": "[concat(parameters('_artifactsLocation'), '/DSC/CreateSecondaryDc.zip', parameters('_artifactsLocationSasToken'))]",
+                "script": "CreateSecondaryDc.ps1",
+                "function": "CreateSecondaryDc"
+              },
+              "configurationArguments": {
+                "DomainName": "[parameters('DomainName')]",
+                "AdminCreds": {
+                  "UserName": "[parameters('Arm-high-availability-app-dc02AdminUserName')]",
+                  "Password": "PrivateSettingsRef:AdminPassword"
+                }
+              }
+            },
+            "protectedSettings": {
+              "AdminPassword": "[parameters('Arm-high-availability-app-dc02AdminPassword')]"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {}
+}

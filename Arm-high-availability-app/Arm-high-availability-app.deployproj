@@ -32,11 +32,13 @@
     </None>
     <Content Include="Deploy-AzureResourceGroup.ps1" />
     <Content Include="DSC\ConfigureIIS.ps1" />
+    <Content Include="nestedtemplates\dc02.json" />
     <Content Include="nestedtemplates\dc01.json" />
     <None Include="DSC\cDisk\cDisk.psd1" />
     <None Include="DSC\cDisk\DSCResources\SAMPLE_cDiskNoRestart\SAMPLE_cDiskNoRestart.psm1" />
     <None Include="DSC\cDisk\DSCResources\SAMPLE_cDiskNoRestart\SAMPLE_cDiskNoRestart.schema.mof" />
     <None Include="DSC\CreateAdForest.ps1" />
+    <None Include="DSC\CreateSecondaryDc.ps1" />
     <None Include="DSC\xActiveDirectory\DSCResources\MSFT_xADCommon\MSFT_xADCommon.ps1" />
     <None Include="DSC\xActiveDirectory\DSCResources\MSFT_xADCommon\MSFT_xADCommon.psm1" />
     <None Include="DSC\xActiveDirectory\DSCResources\MSFT_xADDomainController\MSFT_xADDomainController.psm1" />
