@@ -148,7 +148,7 @@
           "name": "Microsoft.Powershell.DSC",
           "type": "extensions",
           "location": "[resourceGroup().location]",
-          "apiVersion": "2016-03-30",
+          "apiVersion": "2015-06-15",
           "dependsOn": [
             "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-dc01Name'))]"
           ],
