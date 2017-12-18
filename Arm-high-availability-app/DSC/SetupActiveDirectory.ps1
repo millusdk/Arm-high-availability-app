@@ -1,4 +1,4 @@
-configuration CreateADPDC 
+configuration SetupActiveDirectory 
 { 
    param 
    ( 

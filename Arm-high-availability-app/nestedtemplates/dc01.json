@@ -164,15 +164,14 @@
               "configuration": {
                 "url": "[concat(parameters('_artifactsLocation'), '/', variables('DSCFolder'), '/', 'DSCPackage.zip')]",
                 "script": "SetupActiveDirectory.ps1",
-                "function": "Main"
+                "function": "SetupActiveDirectory"
               },
               "configurationArguments": {
                 "DomainName": "[parameters('domainName')]",
                 "AdminCreds": {
                   "UserName": "[parameters('Arm-high-availability-app-dc01AdminUserName').username]",
                   "Password": "PrivateSettingsRef:AdminPassword"
-                },
-                "nodeName": "[variables('Arm-high-availability-app-dc01Name')]"
+                }
               }
             },
             "protectedSettings": {
