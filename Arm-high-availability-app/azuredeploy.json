@@ -63,10 +63,7 @@
     "dc01TemplateFileName": "dc01.json",
     "dc02TemplateFileName": "dc02.json",
     "sqlTemplateFileName": "sql.json",
-    "webTemplateFileName": "web.json",
-    "Vnet DNS updateTemplateFolder": "nestedtemplates",
-    "Vnet DNS updateTemplateFileName": "Vnet DNS update.json",
-    "Vnet DNS updateTemplateParametersFileName": "Vnet DNS update.parameters.json"
+    "webTemplateFileName": "web.json"
   },
   "resources": [
     {
@@ -263,7 +260,7 @@
         "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]",
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
         "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-dc-availability-set-name'))]",
-        "[resourceId('Microsoft.Resources/deployments', 'Vnet DNS update')]"
+        "[resourceId('Microsoft.Resources/deployments', 'VnetDNSUpdate')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -319,7 +316,7 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
         "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-sql-availability-set-name'))]",
-        "[resourceId('Microsoft.Resources/deployments', 'Vnet DNS update')]"
+        "[resourceId('Microsoft.Resources/deployments', 'VnetDNSUpdate')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -370,7 +367,7 @@
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
         "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-web-availability-set-name'))]",
-        "[resourceId('Microsoft.Resources/deployments', 'Vnet DNS update')]"
+        "[resourceId('Microsoft.Resources/deployments', 'VnetDNSUpdate')]"
       ],
       "properties": {
         "mode": "Incremental",
