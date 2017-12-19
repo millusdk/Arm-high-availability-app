@@ -26,9 +26,11 @@
       "type": "string",
       "defaultValue": "Standard_A1_v2"
     },
+
     "Arm-high-availability-app-sql-availability-set-name": {
       "type": "string"
     },
+
     "Index": {
       "type": "int"
     }

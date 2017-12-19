@@ -25,16 +25,19 @@
     "Arm-high-availability-app-dc01WindowsOSVersion": {
       "type": "string"
     },
-    "Arm-high-availability-app-dc-availability-set-name": {
-      "type": "string"
-    },
     "Arm-high-availability-app-dc01VmSize": {
       "type": "string",
       "defaultValue": "Standard_A1_v2"
     },
+
+    "Arm-high-availability-app-dc-availability-set-name": {
+      "type": "string"
+    },
+
     "DomainName": {
       "type": "string"
     },
+
     "_artifactsLocation": {
       "type": "string",
       "metadata": {

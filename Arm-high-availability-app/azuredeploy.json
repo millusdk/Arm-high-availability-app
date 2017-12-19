@@ -58,26 +58,15 @@
     "Arm-high-availability-app-sql-availability-set-name": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'sql', '-', 'availabilitySet')]",
     "Arm-high-availability-app-web-availability-set-name": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'web', '-', 'availabilitySet')]",
 
-    "disk-array-on-object": {
-      "copy": [
-        {
-          "name": "disks",
-          "count": 5,
-          "input": {
-            "name": "[concat('myDataDisk', copyIndex('disks', 1))]",
-            "diskSizeGB": "1",
-            "diskIndex": "[copyIndex('disks')]"
-          }
-        }
-      ]
-    },
-
     "nestedTemplatefolder": "nestedtemplates",
 
     "dc01TemplateFileName": "dc01.json",
     "dc02TemplateFileName": "dc02.json",
     "sqlTemplateFileName": "sql.json",
-    "webTemplateFileName": "web.json"
+    "webTemplateFileName": "web.json",
+    "Vnet DNS updateTemplateFolder": "nestedtemplates",
+    "Vnet DNS updateTemplateFileName": "Vnet DNS update.json",
+    "Vnet DNS updateTemplateParametersFileName": "Vnet DNS update.parameters.json"
   },
   "resources": [
     {
@@ -93,12 +82,6 @@
         "addressSpace": {
           "addressPrefixes": [
             "[variables('Arm-high-availability-app-vnetPrefix')]"
-          ]
-        },
-        "dhcpOptions": {
-          "dnsServers": [
-            "10.0.1.4",
-            "10.0.1.5"
           ]
         },
         "subnets": [
@@ -215,13 +198,64 @@
       }
     },
     {
+      "name": "Vnet DNS update",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'dc01')]"
+      ],
+      "properties": {
+        "mode": "Incremental"
+      },
+      "resources": [
+        {
+          "name": "[variables('Arm-high-availability-app-vnetName')]",
+          "type": "Microsoft.Network/virtualNetworks",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2016-03-30",
+          "dependsOn": [],
+          "tags": {
+            "displayName": "Vnet"
+          },
+          "properties": {
+            "addressSpace": {
+              "addressPrefixes": [
+                "[variables('Arm-high-availability-app-vnetPrefix')]"
+              ]
+            },
+            "dhcpOptions": {
+              "dnsServers": [
+                "10.0.1.4",
+                "10.0.1.5"
+              ]
+            },
+            "subnets": [
+              {
+                "name": "[variables('Arm-high-availability-app-vnetDmzName')]",
+                "properties": {
+                  "addressPrefix": "[variables('Arm-high-availability-app-vnetDmzPrefix')]"
+                }
+              },
+              {
+                "name": "[variables('Arm-high-availability-app-vnetLanName')]",
+                "properties": {
+                  "addressPrefix": "[variables('Arm-high-availability-app-vnetLanPrefix')]"
+                }
+              }
+            ]
+          }
+        }
+      ] 
+    },
+    {
       "name": "dc02",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-09-01",
       "dependsOn": [
         "[resourceId('Microsoft.Network/virtualNetworks', variables('Arm-high-availability-app-vnetName'))]",
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
-        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-dc-availability-set-name'))]"
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-dc-availability-set-name'))]",
+        "[resourceId('Microsoft.Resources/deployments', 'Vnet DNS update')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -276,7 +310,8 @@
       "apiVersion": "2016-09-01",
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
-        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-sql-availability-set-name'))]"
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-sql-availability-set-name'))]",
+        "[resourceId('Microsoft.Resources/deployments', 'Vnet DNS update')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -326,7 +361,8 @@
       "apiVersion": "2016-09-01",
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
-        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-web-availability-set-name'))]"
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-web-availability-set-name'))]",
+        "[resourceId('Microsoft.Resources/deployments', 'Vnet DNS update')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -381,10 +417,6 @@
       "value": {
         "baseName": "[variables('Arm-high-availability-app-baseName')]"
       }
-    },
-    "exampleObject": {
-      "value": "[variables('disk-array-on-object')]",
-      "type": "object"
     }
   }
 }
