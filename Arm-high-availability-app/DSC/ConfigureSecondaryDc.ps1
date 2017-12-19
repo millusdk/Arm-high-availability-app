@@ -111,7 +111,7 @@ configuration ConfigureSecondaryDc
 #>
         xPendingReboot RebootAfterPromotion {
             Name = "RebootAfterDCPromotion"
-            DependsOn = "[WaitForADDomain]DscForestWait"
+            DependsOn = "[xWaitForADDomain]DscForestWait"
         }
 
     }
