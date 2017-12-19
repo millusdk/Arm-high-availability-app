@@ -46,6 +46,7 @@ configuration ConfigureSecondaryDc
         {
             Ensure = "Present"
             Name = "AD-Domain-Services"
+			DependsOn = "[cDiskNoRestart]ADDataDisk"
         }
 
         WindowsFeature ADDSTools
@@ -67,7 +68,7 @@ configuration ConfigureSecondaryDc
             Address        = $DNSServer
             InterfaceAlias = $InterfaceAlias
             AddressFamily  = 'IPv4'
-            DependsOn="[WindowsFeature]ADDSInstall"
+            DependsOn="[WindowsFeature]ADAdminCenter"
         }
         
         <#xWaitForADDomain DscForestWait
