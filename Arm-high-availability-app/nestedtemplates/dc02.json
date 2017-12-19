@@ -165,7 +165,7 @@
       },
       "resources": [
         {
-          "name": "CreateSecondaryDc",
+          "name": "PrepareSecondaryDc",
           "type": "extensions",
           "location": "[resourceGroup().location]",
           "apiVersion": "2015-06-15",
@@ -173,7 +173,7 @@
             "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-dc02Name'))]"
           ],
           "tags": {
-            "displayName": "CreateSecondaryDc",
+            "displayName": "PrepareSecondaryDc",
             "server": "[variables('Arm-high-availability-app-dc02Name')]"
           },
           "properties": {
@@ -184,8 +184,45 @@
             "settings": {
               "configuration": {
                 "url": "[concat(parameters('_artifactsLocation'), '/DSC/DSCPackage.zip', parameters('_artifactsLocationSasToken'))]",
-                "script": "CreateSecondaryDc.ps1",
-                "function": "CreateSecondaryDc"
+                "script": "PrepareSecondaryDc.ps1",
+                "function": "PrepareSecondaryDc"
+              },
+              "configurationArguments": {
+                "DomainName": "[parameters('DomainName')]",
+                "AdminCreds": {
+                  "UserName": "[parameters('Arm-high-availability-app-dc02AdminUserName')]",
+                  "Password": "PrivateSettingsRef:AdminPassword"
+                }
+              }
+            },
+            "protectedSettings": {
+              "AdminPassword": "[parameters('Arm-high-availability-app-dc02AdminPassword')]"
+            }
+          }
+        },
+        {
+          "name": "ConfigureSecondaryDc",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-06-15",
+          "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-dc02Name'))]",
+            "[concat('Microsoft.Compute/virtualMachines/', variables('Arm-high-availability-app-dc02Name'), '/extensions/PrepareSecondaryDc')]"
+          ],
+          "tags": {
+            "displayName": "ConfigureSecondaryDc",
+            "server": "[variables('Arm-high-availability-app-dc02Name')]"
+          },
+          "properties": {
+            "publisher": "Microsoft.Powershell",
+            "type": "DSC",
+            "typeHandlerVersion": "2.9",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "configuration": {
+                "url": "[concat(parameters('_artifactsLocation'), '/DSC/DSCPackage.zip', parameters('_artifactsLocationSasToken'))]",
+                "script": "ConfigureSecondaryDc.ps1",
+                "function": "ConfigureSecondaryDc"
               },
               "configurationArguments": {
                 "DomainName": "[parameters('DomainName')]",

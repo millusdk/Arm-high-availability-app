@@ -37,8 +37,9 @@
     <None Include="DSC\cDisk\cDisk.psd1" />
     <None Include="DSC\cDisk\DSCResources\SAMPLE_cDiskNoRestart\SAMPLE_cDiskNoRestart.psm1" />
     <None Include="DSC\cDisk\DSCResources\SAMPLE_cDiskNoRestart\SAMPLE_cDiskNoRestart.schema.mof" />
+    <None Include="DSC\ConfigureSecondaryDc.ps1" />
     <None Include="DSC\CreateAdForest.ps1" />
-    <None Include="DSC\CreateSecondaryDc.ps1" />
+    <None Include="DSC\PrepareSecondaryDc.ps1" />
     <None Include="DSC\xActiveDirectory\DSCResources\MSFT_xADCommon\MSFT_xADCommon.ps1" />
     <None Include="DSC\xActiveDirectory\DSCResources\MSFT_xADCommon\MSFT_xADCommon.psm1" />
     <None Include="DSC\xActiveDirectory\DSCResources\MSFT_xADDomainController\MSFT_xADDomainController.psm1" />
