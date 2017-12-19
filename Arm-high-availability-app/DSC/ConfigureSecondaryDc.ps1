@@ -71,7 +71,7 @@ configuration ConfigureSecondaryDc
             DependsOn="[WindowsFeature]ADAdminCenter"
         }
         
-        <#xWaitForADDomain DscForestWait
+        WaitForADDomain DscForestWait
         {
             DomainName = $DomainName
             DomainUserCredential= $DomainCreds
@@ -80,7 +80,7 @@ configuration ConfigureSecondaryDc
 			DependsOn="[xDnsServerAddress]DnsServerAddress"
         }
 
-        xADDomainController SecondaryDc
+        <#xADDomainController SecondaryDc
         {
             DomainName = $DomainName
             DomainAdministratorCredential = $DomainCreds
@@ -106,12 +106,12 @@ configuration ConfigureSecondaryDc
             }
             GetScript =  { @{} }
             TestScript = { $false}
-            DependsOn = "[xADDomainController]SecondaryDc"
+            DependsOn = "[WaitForADDomain]DscForestWait"
         }
 #>
         xPendingReboot RebootAfterPromotion {
             Name = "RebootAfterDCPromotion"
-            DependsOn = "[xDnsServerAddress]DnsServerAddress"
+            DependsOn = "[WaitForADDomain]DscForestWait"
         }
 
     }
