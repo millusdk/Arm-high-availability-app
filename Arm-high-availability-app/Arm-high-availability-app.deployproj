@@ -155,6 +155,7 @@
     <None Include="DSC\xPendingReboot\xPendingReboot.psd1" />
     <None Include="DSC\xPendingReboot\xPendingReboot_Documentation.html" />
     <None Include="Ensure-DeployStorageAccountExists.ps1" />
+    <None Include="nestedtemplates\configureSecondaryDc.json" />
     <None Include="nestedtemplates\web.json" />
     <None Include="nestedtemplates\sql.json" />
   </ItemGroup>

@@ -297,6 +297,9 @@
           "Arm-high-availability-app-dc02VmSize": {
             "value": "[parameters('Arm-high-availability-app-vmSize')]"
           },
+          "nestedTemplatefolder": {
+            "value": "[variables('nestedTemplatefolder')]"
+          },
           "DomainName": {
             "value": "[parameters('DomainName')]"
           },
@@ -423,7 +426,7 @@
       },
       "copy": {
         "name": "webcopy",
-        "count": 2
+        "count": 0
       }
     }
   ],
