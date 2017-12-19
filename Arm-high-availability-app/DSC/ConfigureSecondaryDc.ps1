@@ -110,7 +110,7 @@ configuration ConfigureSecondaryDc
 #>
         xPendingReboot RebootAfterPromotion {
             Name = "RebootAfterDCPromotion"
-            DependsOn = "[xADDomainController]SecondaryDc"
+            DependsOn = "[xDnsServerAddress]DnsServerAddress"
         }
 
     }
