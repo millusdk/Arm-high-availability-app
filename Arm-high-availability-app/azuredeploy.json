@@ -198,7 +198,7 @@
       }
     },
     {
-      "name": "Vnet DNS update",
+      "name": "VnetDNSUpdate",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-09-01",
       "dependsOn": [
@@ -410,6 +410,15 @@
           },
           "Index": {
             "value": "[copyIndex(1)]"
+          },
+          "DomainName": {
+            "value": "[parameters('DomainName')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
           }
         }
       },

@@ -1,72 +1,114 @@
-Configuration Main
+Configuration ConfigureWebServer
 {
 
-Param ( [string] $nodeName )
+	param 
+    ( 
+        [Parameter(Mandatory)]
+        [String]$DomainName,
 
-Import-DscResource -ModuleName PSDesiredStateConfiguration
+        [Parameter(Mandatory)]
+        [System.Management.Automation.PSCredential]$Admincreds,
 
-Node $nodeName
+        [Int]$RetryCount=20,
+        [Int]$RetryIntervalSec=60
+    )
+
+Import-DscResource -ModuleName xComputerManagement, xPendingReboot, PSDesiredStateConfiguration
+
+Node localhost
   {
+	LocalConfigurationManager            
+    {            
+      ActionAfterReboot = 'ContinueConfiguration'            
+      ConfigurationMode = 'ApplyOnly'            
+      RebootNodeIfNeeded = $true            
+    }
+
     WindowsFeature WebServerRole
     {
       Name = "Web-Server"
       Ensure = "Present"
     }
+
     WindowsFeature WebManagementConsole
     {
       Name = "Web-Mgmt-Console"
       Ensure = "Present"
     }
+
     WindowsFeature WebManagementService
     {
       Name = "Web-Mgmt-Service"
       Ensure = "Present"
     }
+
     WindowsFeature ASPNet45
     {
       Name = "Web-Asp-Net45"
       Ensure = "Present"
     }
+
     WindowsFeature HTTPRedirection
     {
       Name = "Web-Http-Redirect"
       Ensure = "Present"
     }
+
     WindowsFeature CustomLogging
     {
       Name = "Web-Custom-Logging"
       Ensure = "Present"
     }
+
     WindowsFeature LogginTools
     {
       Name = "Web-Log-Libraries"
       Ensure = "Present"
     }
+
     WindowsFeature RequestMonitor
     {
       Name = "Web-Request-Monitor"
       Ensure = "Present"
     }
+
     WindowsFeature Tracing
     {
       Name = "Web-Http-Tracing"
       Ensure = "Present"
     }
+
     WindowsFeature BasicAuthentication
     {
       Name = "Web-Basic-Auth"
       Ensure = "Present"
     }
+
     WindowsFeature WindowsAuthentication
     {
       Name = "Web-Windows-Auth"
       Ensure = "Present"
     }
+
     WindowsFeature ApplicationInitialization
     {
       Name = "Web-AppInit"
       Ensure = "Present"
     }
+
+	xComputer JoinDomain
+    {
+      DomainName = $DomainName
+      Credential = $Credential # Credential to join to domain
+      DependsOn = "[WindowsFeature]WebServerRole"
+    }
+
+	xPendingReboot Reboot
+    { 
+      Name = "RebootServer"
+      DependsOn = "[xComputer]JoinDomain"
+    }
+
     Script DownloadWebDeploy
     {
         TestScript = {
@@ -78,8 +120,9 @@ Node $nodeName
             Invoke-WebRequest $source -OutFile $dest
         }
         GetScript = {@{Result = "DownloadWebDeploy"}}
-        DependsOn = "[WindowsFeature]WebServerRole"
+        DependsOn = "[xPendingReboot]Reboot"
     }
+
     Package InstallWebDeploy
     {
         Ensure = "Present"  
@@ -89,6 +132,7 @@ Node $nodeName
         Arguments = "ADDLOCAL=ALL"
         DependsOn = "[Script]DownloadWebDeploy"
     }
+
     Service StartWebDeploy
     {                    
         Name = "WMSVC"
