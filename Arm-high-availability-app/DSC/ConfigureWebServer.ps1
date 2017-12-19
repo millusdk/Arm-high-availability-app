@@ -3,6 +3,9 @@ Configuration ConfigureWebServer
 
 	param 
     ( 
+		[Parameter(Mandatory)]
+        [String]$ComputerName,
+
         [Parameter(Mandatory)]
         [String]$DomainName,
 
@@ -98,6 +101,7 @@ Node localhost
 
 	xComputer JoinDomain
     {
+	  Name = $ComputerName
       DomainName = $DomainName
       Credential = $Credential # Credential to join to domain
       DependsOn = "[WindowsFeature]WebServerRole"

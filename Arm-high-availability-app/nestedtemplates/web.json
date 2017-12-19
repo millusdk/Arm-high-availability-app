@@ -177,6 +177,7 @@
                 "function": "ConfigureWebServer"
               },
               "configurationArguments": {
+                "ComputerName": "[variables('Arm-high-availability-app-webName')]",
                 "DomainName": "[parameters('DomainName')]",
                 "AdminCreds": {
                   "UserName": "[parameters('Arm-high-availability-app-adminUserName')]",

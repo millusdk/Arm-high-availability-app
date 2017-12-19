@@ -71,7 +71,7 @@ configuration ConfigureSecondaryDc
             DependsOn="[WindowsFeature]ADAdminCenter"
         }
         
-        WaitForADDomain DscForestWait
+        xWaitForADDomain DscForestWait
         {
             DomainName = $DomainName
             DomainUserCredential= $DomainCreds
