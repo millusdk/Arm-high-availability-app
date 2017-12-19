@@ -66,7 +66,7 @@
     "Arm-high-availability-app-dc02StorageAccountContainerName": "vhds",
     "Arm-high-availability-app-dc02NicName": "[concat(variables('Arm-high-availability-app-dc02Name'), '-', 'nic02')]",
 
-    "configureSecondaryDcFileName": "configureSecondaryDc" 
+    "configureSecondaryDcFileName": "configureSecondaryDc.json" 
   },
   "resources": [
     {
