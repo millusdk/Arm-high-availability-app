@@ -205,47 +205,53 @@
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]"
       ],
       "properties": {
-        "mode": "Incremental"
-      },
-      "resources": [
-        {
-          "name": "[variables('Arm-high-availability-app-vnetName')]",
-          "type": "Microsoft.Network/virtualNetworks",
-          "location": "[resourceGroup().location]",
-          "apiVersion": "2016-03-30",
-          "dependsOn": [],
-          "tags": {
-            "displayName": "Vnet"
-          },
-          "properties": {
-            "addressSpace": {
-              "addressPrefixes": [
-                "[variables('Arm-high-availability-app-vnetPrefix')]"
-              ]
-            },
-            "dhcpOptions": {
-              "dnsServers": [
-                "10.0.1.4",
-                "10.0.1.5"
-              ]
-            },
-            "subnets": [
-              {
-                "name": "[variables('Arm-high-availability-app-vnetDmzName')]",
-                "properties": {
-                  "addressPrefix": "[variables('Arm-high-availability-app-vnetDmzPrefix')]"
-                }
+        "mode": "Incremental",
+        "parameters": {},
+        "template": {
+          "parameters": {},
+          "variables": {},
+          "resources": [
+            {
+              "name": "[variables('Arm-high-availability-app-vnetName')]",
+              "type": "Microsoft.Network/virtualNetworks",
+              "location": "[resourceGroup().location]",
+              "apiVersion": "2016-03-30",
+              "dependsOn": [],
+              "tags": {
+                "displayName": "Vnet"
               },
-              {
-                "name": "[variables('Arm-high-availability-app-vnetLanName')]",
-                "properties": {
-                  "addressPrefix": "[variables('Arm-high-availability-app-vnetLanPrefix')]"
-                }
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "[variables('Arm-high-availability-app-vnetPrefix')]"
+                  ]
+                },
+                "dhcpOptions": {
+                  "dnsServers": [
+                    "10.0.1.4",
+                    "10.0.1.5"
+                  ]
+                },
+                "subnets": [
+                  {
+                    "name": "[variables('Arm-high-availability-app-vnetDmzName')]",
+                    "properties": {
+                      "addressPrefix": "[variables('Arm-high-availability-app-vnetDmzPrefix')]"
+                    }
+                  },
+                  {
+                    "name": "[variables('Arm-high-availability-app-vnetLanName')]",
+                    "properties": {
+                      "addressPrefix": "[variables('Arm-high-availability-app-vnetLanPrefix')]"
+                    }
+                  }
+                ]
               }
-            ]
-          }
+            }
+          ],
+          "outputs": {}
         }
-      ] 
+      }
     },
     {
       "name": "dc02",
