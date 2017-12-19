@@ -191,7 +191,8 @@
             "function": "ConfigureSecondaryDc"
           },
           "configurationArguments": {
-            "DNSServer": "10.0.0.4",
+            "ComputerName": "[variables('Arm-high-availability-app-dc02Name')]",
+            "DNSServer": "10.0.1.4",
             "DomainName": "[parameters('DomainName')]",
             "AdminCreds": {
               "UserName": "[parameters('Arm-high-availability-app-dc02AdminUserName')]",

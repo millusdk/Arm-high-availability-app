@@ -3,6 +3,9 @@ configuration ConfigureSecondaryDc
    param
     (
 		[Parameter(Mandatory)]
+        [String]$ComputerName,
+
+        [Parameter(Mandatory)]
         [String]$DNSServer,
 
         [Parameter(Mandatory)]
@@ -15,7 +18,7 @@ configuration ConfigureSecondaryDc
         [Int]$RetryIntervalSec=30
     )
 
-    Import-DscResource -ModuleName xDisk, cDisk, xNetworking, xActiveDirectory, xPendingReboot
+    Import-DscResource -ModuleName xDisk, cDisk, xNetworking, xActiveDirectory, xPendingReboot, xComputerManagement
 
     [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
 	$Interface=Get-NetAdapter|Where Name -Like "Ethernet*"|Select-Object -First 1
@@ -71,13 +74,12 @@ configuration ConfigureSecondaryDc
             DependsOn="[WindowsFeature]ADAdminCenter"
         }
         
-        xWaitForADDomain DscForestWait
+        xComputer JoinDomain
         {
-            DomainName = $DomainName
-            DomainUserCredential= $DomainCreds
-            RetryCount = $RetryCount
-            RetryIntervalSec = $RetryIntervalSec
-			DependsOn="[xDnsServerAddress]DnsServerAddress"
+	      Name = $ComputerName
+          DomainName = $DomainName
+          Credential = $Credential # Credential to join to domain
+          DependsOn = "[WindowsFeature]WebServerRole"
         }
 
         <#xADDomainController SecondaryDc
