@@ -64,9 +64,7 @@
     "Arm-high-availability-app-dc02DataDiskName": "[concat(variables('Arm-high-availability-app-dc02Name'), '-', 'datadisk')]",
     "Arm-high-availability-app-dc02SubnetRef": "[concat(parameters('Arm-high-availability-app-vnetID'), '/subnets/', parameters('Arm-high-availability-app-vnetLanName'))]",
     "Arm-high-availability-app-dc02StorageAccountContainerName": "vhds",
-    "Arm-high-availability-app-dc02NicName": "[concat(variables('Arm-high-availability-app-dc02Name'), '-', 'nic02')]",
-
-    "configureSecondaryDcFileName": "configureSecondaryDc.json" 
+    "Arm-high-availability-app-dc02NicName": "[concat(variables('Arm-high-availability-app-dc02Name'), '-', 'nic02')]"
   },
   "resources": [
     {
@@ -170,7 +168,7 @@
       "resources": []
     },
     {
-      "name": "[concat(variables('Arm-high-availability-app-dc02Name'), '/PrepareSecondaryDc')]",
+      "name": "[concat(variables('Arm-high-availability-app-dc02Name'), '/ConfigureSecondaryDc')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-06-15",
@@ -178,7 +176,7 @@
         "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-dc02Name'))]"
       ],
       "tags": {
-        "displayName": "PrepareSecondaryDc",
+        "displayName": "ConfigureSecondaryDc",
         "server": "[variables('Arm-high-availability-app-dc02Name')]"
       },
       "properties": {
@@ -189,51 +187,20 @@
         "settings": {
           "configuration": {
             "url": "[concat(parameters('_artifactsLocation'), '/DSC/DSCPackage.zip', parameters('_artifactsLocationSasToken'))]",
-            "script": "PrepareSecondaryDc.ps1",
-            "function": "PrepareSecondaryDc"
+            "script": "ConfigureSecondaryDc.ps1",
+            "function": "ConfigureSecondaryDc"
           },
           "configurationArguments": {
-            "DNSServer": "10.0.0.4"
+            "DNSServer": "10.0.0.4",
+            "DomainName": "[parameters('DomainName')]",
+            "AdminCreds": {
+              "UserName": "[parameters('Arm-high-availability-app-dc02AdminUserName')]",
+              "Password": "PrivateSettingsRef:AdminPassword"
+            }
           }
         },
         "protectedSettings": {
           "AdminPassword": "[parameters('Arm-high-availability-app-dc02AdminPassword')]"
-        }
-      }
-    },
-    {
-      "name": "ConfigureSecondaryDC",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-09-01",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/',variables('Arm-high-availability-app-dc02Name'),'/extensions/PrepareSecondaryDc')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('_artifactsLocation'), '/', parameters('nestedTemplatefolder'), '/', variables('configureSecondaryDcFileName'), parameters('_artifactsLocationSasToken'))]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "Arm-high-availability-app-dc02Name": {
-            "value": "[variables('Arm-high-availability-app-dc02Name')]"
-          },
-          "Arm-high-availability-app-dc02AdminUserName": {
-            "value": "[parameters('Arm-high-availability-app-dc02AdminUserName')]"
-          },
-          "Arm-high-availability-app-dc02AdminPassword": {
-            "value": "[parameters('Arm-high-availability-app-dc02AdminPassword')]"
-          },
-
-          "DomainName": {
-            "value": "[parameters('DomainName')]"
-          },
-          "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
-          },
-          "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
-          }
         }
       }
     }

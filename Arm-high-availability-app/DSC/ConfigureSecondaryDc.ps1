@@ -2,6 +2,9 @@ configuration ConfigureSecondaryDc
 {
    param
     (
+		[Parameter(Mandatory)]
+        [String]$DNSServer,
+
         [Parameter(Mandatory)]
         [String]$DomainName,
 
@@ -12,7 +15,7 @@ configuration ConfigureSecondaryDc
         [Int]$RetryIntervalSec=30
     )
 
-    Import-DscResource -ModuleName xActiveDirectory, xPendingReboot
+    Import-DscResource -ModuleName xDisk, cDisk, xNetworking, xActiveDirectory, xPendingReboot
 
     [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
 
@@ -22,6 +25,48 @@ configuration ConfigureSecondaryDc
         {
             RebootNodeIfNeeded = $true
         }
+
+		xWaitforDisk Disk2
+        {
+                DiskNumber = 2
+                RetryIntervalSec =$RetryIntervalSec
+                RetryCount = $RetryCount
+        }
+
+		cDiskNoRestart ADDataDisk
+        {
+            DiskNumber = 2
+            DriveLetter = "F"
+            DependsOn = "[xWaitForDisk]Disk2"
+        }
+
+		WindowsFeature ADDSInstall
+        {
+            Ensure = "Present"
+            Name = "AD-Domain-Services"
+        }
+
+        WindowsFeature ADDSTools
+        {
+            Ensure = "Present"
+            Name = "RSAT-ADDS-Tools"
+            DependsOn = "[WindowsFeature]ADDSInstall"
+        }
+
+        WindowsFeature ADAdminCenter
+        {
+            Ensure = "Present"
+            Name = "RSAT-AD-AdminCenter"
+            DependsOn = "[WindowsFeature]ADDSTools"
+        }
+
+        xDnsServerAddress DnsServerAddress
+        {
+            Address        = $DNSServer
+            InterfaceAlias = $InterfaceAlias
+            AddressFamily  = 'IPv4'
+            DependsOn="[WindowsFeature]ADDSInstall"
+        }
         
         xWaitForADDomain DscForestWait
         {
@@ -29,6 +74,7 @@ configuration ConfigureSecondaryDc
             DomainUserCredential= $DomainCreds
             RetryCount = $RetryCount
             RetryIntervalSec = $RetryIntervalSec
+			DependsOn="[xDnsServerAddress]DnsServerAddress"
         }
         xADDomainController BDC
         {

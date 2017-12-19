@@ -154,7 +154,7 @@
       },
       "resources": [
         {
-          "name": "CreateSecondaryDc",
+          "name": "ConfigureWebServer",
           "type": "extensions",
           "location": "[resourceGroup().location]",
           "apiVersion": "2015-06-15",
@@ -162,7 +162,7 @@
             "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-webName'))]"
           ],
           "tags": {
-            "displayName": "CreateSecondaryDc",
+            "displayName": "ConfigureWebServer",
             "server": "[variables('Arm-high-availability-app-webName')]"
           },
           "properties": {
