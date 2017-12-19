@@ -315,6 +315,7 @@
       "apiVersion": "2016-09-01",
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
+        "[resourceId('Microsoft.Resources/deployments', 'dc02')]",
         "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-sql-availability-set-name'))]",
         "[resourceId('Microsoft.Resources/deployments', 'VnetDNSUpdate')]"
       ],
@@ -366,6 +367,7 @@
       "apiVersion": "2016-09-01",
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
+        "[resourceId('Microsoft.Resources/deployments', 'dc02')]",
         "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-web-availability-set-name'))]",
         "[resourceId('Microsoft.Resources/deployments', 'VnetDNSUpdate')]"
       ],
