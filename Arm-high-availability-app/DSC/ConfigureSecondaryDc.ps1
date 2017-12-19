@@ -18,12 +18,14 @@ configuration ConfigureSecondaryDc
     Import-DscResource -ModuleName xDisk, cDisk, xNetworking, xActiveDirectory, xPendingReboot
 
     [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
+	$Interface=Get-NetAdapter|Where Name -Like "Ethernet*"|Select-Object -First 1
+    $InterfaceAlias=$($Interface.Name)
 
     Node localhost
     {
         LocalConfigurationManager
         {
-            RebootNodeIfNeeded = $true
+            RebootNodeIfNeeded = $false
         }
 
 		xWaitforDisk Disk2
@@ -68,7 +70,7 @@ configuration ConfigureSecondaryDc
             DependsOn="[WindowsFeature]ADDSInstall"
         }
         
-        xWaitForADDomain DscForestWait
+        <#xWaitForADDomain DscForestWait
         {
             DomainName = $DomainName
             DomainUserCredential= $DomainCreds
@@ -76,7 +78,8 @@ configuration ConfigureSecondaryDc
             RetryIntervalSec = $RetryIntervalSec
 			DependsOn="[xDnsServerAddress]DnsServerAddress"
         }
-        xADDomainController BDC
+
+        xADDomainController SecondaryDc
         {
             DomainName = $DomainName
             DomainAdministratorCredential = $DomainCreds
@@ -102,12 +105,12 @@ configuration ConfigureSecondaryDc
             }
             GetScript =  { @{} }
             TestScript = { $false}
-            DependsOn = "[xADDomainController]BDC"
+            DependsOn = "[xADDomainController]SecondaryDc"
         }
 #>
         xPendingReboot RebootAfterPromotion {
             Name = "RebootAfterDCPromotion"
-            DependsOn = "[xADDomainController]BDC"
+            DependsOn = "[xADDomainController]SecondaryDc"
         }
 
     }
