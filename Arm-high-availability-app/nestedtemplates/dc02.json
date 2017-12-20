@@ -192,11 +192,11 @@
           },
           "configurationArguments": {
             "ComputerName": "[variables('Arm-high-availability-app-dc02Name')]",
-            "DNSServer": "10.0.1.4",
             "DomainName": "[parameters('DomainName')]",
+            "DNSServer": "10.0.1.4",
             "AdminCreds": {
               "UserName": "[parameters('Arm-high-availability-app-dc02AdminUserName')]",
-              "Password": "PrivateSettingsRef:AdminPassword"
+              "Password": "[parameters('Arm-high-availability-app-dc02AdminPassword')]"
             }
           }
         },
