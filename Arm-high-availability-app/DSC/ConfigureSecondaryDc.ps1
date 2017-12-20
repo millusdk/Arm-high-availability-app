@@ -78,7 +78,7 @@ configuration ConfigureSecondaryDc
 		Script JoinDomain {
 			SetScript =
             {
-                Add-Computer -DomainName $DomainName -Credential $DomainCreds
+                Add-Computer -DomainName $using:DomainName -Credential $using:DomainCreds
             }
             GetScript =  { @{} }
             TestScript = { $false}
