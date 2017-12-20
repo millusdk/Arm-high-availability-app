@@ -20,7 +20,7 @@ configuration ConfigureSecondaryDc
 
     Import-DscResource -ModuleName xDisk, cDisk, xNetworking, xActiveDirectory, xPendingReboot, xComputerManagement
 
-    [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
+    [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("$DomainName\$($Admincreds.UserName)", $Admincreds.Password)
 	[System.Management.Automation.PSCredential ]$Creds = New-Object System.Management.Automation.PSCredential ($Admincreds.UserName, $Admincreds.Password)
 	$Interface=Get-NetAdapter|Where Name -Like "Ethernet*"|Select-Object -First 1
     $InterfaceAlias=$($Interface.Name)
@@ -31,6 +31,10 @@ configuration ConfigureSecondaryDc
         {
             RebootNodeIfNeeded = $false
         }
+
+		Log LogCreds{
+			Message = "Username: $DomainName\$($Admincreds.UserName); Password: $($Admincreds.Password)"
+		}
 
 		xWaitforDisk Disk2
         {
@@ -78,7 +82,7 @@ configuration ConfigureSecondaryDc
 		Script JoinDomain {
 			SetScript =
             {
-                Add-Computer -DomainName $using:DomainName -Credential $using:Creds
+                Add-Computer -DomainName $using:DomainName -Credential $using:DomainCreds
             }
             GetScript =  { @{} }
             TestScript = { $false}
