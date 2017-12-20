@@ -21,6 +21,7 @@ configuration ConfigureSecondaryDc
     Import-DscResource -ModuleName xDisk, cDisk, xNetworking, xActiveDirectory, xPendingReboot, xComputerManagement
 
     [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
+	[System.Management.Automation.PSCredential ]$Creds = New-Object System.Management.Automation.PSCredential ($Admincreds.UserName, $Admincreds.Password)
 	$Interface=Get-NetAdapter|Where Name -Like "Ethernet*"|Select-Object -First 1
     $InterfaceAlias=$($Interface.Name)
 
@@ -78,7 +79,7 @@ configuration ConfigureSecondaryDc
         {
 	      Name = $ComputerName
           DomainName = $DomainName
-          Credential = $DomainCreds # Credential to join to domain
+          Credential = $Creds # Credential to join to domain
           DependsOn = "[xDnsServerAddress]DnsServerAddress"
         }
 
