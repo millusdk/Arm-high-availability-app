@@ -124,7 +124,7 @@ configuration ConfigureSecondaryDc
 
         xPendingReboot RebootAfterPromotion {
             Name = "RebootAfterDCPromotion"
-            DependsOn = "[xADDomainController]SecondaryDc"
+            DependsOn = "[xComputer]JoinDomain"
         }
 
     }
