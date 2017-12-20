@@ -75,7 +75,7 @@ configuration ConfigureSecondaryDc
             DependsOn="[WindowsFeature]ADAdminCenter"
         }
 
-		Script JoinDomain {
+		<#Script JoinDomain {
 			SetScript =
             {
                 Add-Computer -DomainName $using:DomainName -Credential $using:Domaincreds
@@ -83,17 +83,17 @@ configuration ConfigureSecondaryDc
             GetScript =  { @{} }
             TestScript = { $false}
             DependsOn = "[xDnsServerAddress]DnsServerAddress"
-		}
+		}#>
         
-        <#xComputer JoinDomain
+        xComputer JoinDomain
         {
 	      Name = $ComputerName
           DomainName = $DomainName
-          Credential = $Creds # Credential to join to domain
+          Credential = $DomainCreds # Credential to join to domain
           DependsOn = "[xDnsServerAddress]DnsServerAddress"
         }#>
 
-        xADDomainController SecondaryDc
+        <#xADDomainController SecondaryDc
         {
             DomainName = $DomainName
             DomainAdministratorCredential = $Domaincreds
@@ -101,7 +101,7 @@ configuration ConfigureSecondaryDc
             DatabasePath = "F:\NTDS"
             LogPath = "F:\NTDS"
             SysvolPath = "F:\SYSVOL"
-            DependsOn = "[Script]JoinDomain"
+            DependsOn = "[xDnsServerAddress]DnsServerAddress"
         }
 
         <#Script UpdateDNSForwarder
