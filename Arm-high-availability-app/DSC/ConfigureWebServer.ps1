@@ -18,6 +18,8 @@ Configuration ConfigureWebServer
 
 Import-DscResource -ModuleName xComputerManagement, xPendingReboot, PSDesiredStateConfiguration
 
+	[System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
+
 Node localhost
   {
 	LocalConfigurationManager            
@@ -103,7 +105,7 @@ Node localhost
     {
 	  Name = $ComputerName
       DomainName = $DomainName
-      Credential = $Credential # Credential to join to domain
+      Credential = $DomainCreds # Credential to join to domain
       DependsOn = "[WindowsFeature]WebServerRole"
     }
 

@@ -171,7 +171,7 @@
       "name": "[concat(variables('Arm-high-availability-app-dc02Name'), '/ConfigureSecondaryDc')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
+      "apiVersion": "2016-03-30",
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-dc02Name'))]"
       ],
@@ -193,15 +193,16 @@
           "configurationArguments": {
             "ComputerName": "[variables('Arm-high-availability-app-dc02Name')]",
             "DomainName": "[parameters('DomainName')]",
-            "DNSServer": "10.0.1.4",
-            "AdminCreds": {
-              "UserName": "[parameters('Arm-high-availability-app-dc02AdminUserName')]",
-              "Password": "[parameters('Arm-high-availability-app-dc02AdminPassword')]"
-            }
+            "DNSServer": "10.0.1.4"
           }
         },
         "protectedSettings": {
-          "AdminPassword": "[parameters('Arm-high-availability-app-dc02AdminPassword')]"
+          "configurationArguments": {
+            "adminCreds": {
+              "userName": "[parameters('Arm-high-availability-app-dc02AdminUserName')]",
+              "password": "[parameters('Arm-high-availability-app-dc02AdminPassword')]"
+            }
+          }
         }
       }
     }

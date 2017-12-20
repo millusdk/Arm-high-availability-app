@@ -157,7 +157,7 @@
           "name": "ConfigureWebServer",
           "type": "extensions",
           "location": "[resourceGroup().location]",
-          "apiVersion": "2015-06-15",
+          "apiVersion": "2016-03-30",
           "dependsOn": [
             "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-webName'))]"
           ],
@@ -178,15 +178,16 @@
               },
               "configurationArguments": {
                 "ComputerName": "[variables('Arm-high-availability-app-webName')]",
-                "DomainName": "[parameters('DomainName')]",
-                "AdminCreds": {
-                  "UserName": "[parameters('Arm-high-availability-app-adminUserName')]",
-                  "Password": "PrivateSettingsRef:AdminPassword"
-                }
+                "DomainName": "[parameters('DomainName')]"
               }
             },
             "protectedSettings": {
-              "AdminPassword": "[parameters('Arm-high-availability-app-adminPassword')]"
+              "configurationArguments": {
+                "adminCreds": {
+                  "userName": "[parameters('Arm-high-availability-app-adminUserName')]",
+                  "password": "[parameters('Arm-high-availability-app-adminPassword')]"
+                }
+              }
             }
           }
         }

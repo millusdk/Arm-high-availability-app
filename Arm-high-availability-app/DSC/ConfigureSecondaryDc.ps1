@@ -20,10 +20,7 @@ configuration ConfigureSecondaryDc
 
     Import-DscResource -ModuleName xDisk, cDisk, xNetworking, xActiveDirectory, xPendingReboot, xComputerManagement
 
-    [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("$DomainName\$($Admincreds.UserName)", $Admincreds.Password)
-	[System.Management.Automation.PSCredential ]$Creds = New-Object System.Management.Automation.PSCredential ($Admincreds.UserName, $Admincreds.Password)
-
-	$UnsecurePassword = $Admincreds.GetNetworkCredential().Password
+    [System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
 
 	$Interface=Get-NetAdapter|Where Name -Like "Ethernet*"|Select-Object -First 1
     $InterfaceAlias=$($Interface.Name)
@@ -32,12 +29,8 @@ configuration ConfigureSecondaryDc
     {
         LocalConfigurationManager
         {
-            RebootNodeIfNeeded = $false
+            RebootNodeIfNeeded = $true
         }
-
-		Log LogCreds{
-			Message = "Username: $DomainName\$($Admincreds.UserName); Password: $($UnsecurePassword)"
-		}
 
 		xWaitforDisk Disk2
         {
@@ -85,7 +78,7 @@ configuration ConfigureSecondaryDc
 		Script JoinDomain {
 			SetScript =
             {
-                Add-Computer -DomainName $using:DomainName -Credential $using:DomainCreds
+                Add-Computer -DomainName $using:DomainName -Credential $using:Domaincreds
             }
             GetScript =  { @{} }
             TestScript = { $false}
@@ -98,20 +91,20 @@ configuration ConfigureSecondaryDc
           DomainName = $DomainName
           Credential = $Creds # Credential to join to domain
           DependsOn = "[xDnsServerAddress]DnsServerAddress"
-        }
+        }#>
 
         xADDomainController SecondaryDc
         {
             DomainName = $DomainName
-            DomainAdministratorCredential = $DomainCreds
-            SafemodeAdministratorPassword = $DomainCreds
+            DomainAdministratorCredential = $Domaincreds
+            SafemodeAdministratorPassword = $Domaincreds
             DatabasePath = "F:\NTDS"
             LogPath = "F:\NTDS"
             SysvolPath = "F:\SYSVOL"
-            DependsOn = "[xWaitForADDomain]DscForestWait"
+            DependsOn = "[Script]JoinDomain"
         }
 
-        Script UpdateDNSForwarder
+        <#Script UpdateDNSForwarder
         {
             SetScript =
             {
@@ -131,7 +124,7 @@ configuration ConfigureSecondaryDc
 
         xPendingReboot RebootAfterPromotion {
             Name = "RebootAfterDCPromotion"
-            DependsOn = "[Script]JoinDomain"
+            DependsOn = "[xADDomainController]SecondaryDc"
         }
 
     }
