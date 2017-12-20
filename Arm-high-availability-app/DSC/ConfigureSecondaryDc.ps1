@@ -79,7 +79,7 @@ configuration ConfigureSecondaryDc
 	      Name = $ComputerName
           DomainName = $DomainName
           Credential = $Credential # Credential to join to domain
-          DependsOn = "[WindowsFeature]WebServerRole"
+          DependsOn = "[xDnsServerAddress]DnsServerAddress"
         }
 
         <#xADDomainController SecondaryDc
@@ -113,7 +113,7 @@ configuration ConfigureSecondaryDc
 #>
         xPendingReboot RebootAfterPromotion {
             Name = "RebootAfterDCPromotion"
-            DependsOn = "[xWaitForADDomain]DscForestWait"
+            DependsOn = "[xComputer]JoinDomain"
         }
 
     }
