@@ -74,8 +74,18 @@ configuration ConfigureSecondaryDc
             AddressFamily  = 'IPv4'
             DependsOn="[WindowsFeature]ADAdminCenter"
         }
+
+		Script JoinDomain {
+			SetScript =
+            {
+                Add-Computer -DomainName $DomainName -Credential $DomainCreds
+            }
+            GetScript =  { @{} }
+            TestScript = { $false}
+            DependsOn = "[xDnsServerAddress]DnsServerAddress"
+		}
         
-        xComputer JoinDomain
+        <#xComputer JoinDomain
         {
 	      Name = $ComputerName
           DomainName = $DomainName
@@ -83,7 +93,7 @@ configuration ConfigureSecondaryDc
           DependsOn = "[xDnsServerAddress]DnsServerAddress"
         }
 
-        <#xADDomainController SecondaryDc
+        xADDomainController SecondaryDc
         {
             DomainName = $DomainName
             DomainAdministratorCredential = $DomainCreds
@@ -93,7 +103,7 @@ configuration ConfigureSecondaryDc
             SysvolPath = "F:\SYSVOL"
             DependsOn = "[xWaitForADDomain]DscForestWait"
         }
-<#
+
         Script UpdateDNSForwarder
         {
             SetScript =
@@ -110,11 +120,11 @@ configuration ConfigureSecondaryDc
             GetScript =  { @{} }
             TestScript = { $false}
             DependsOn = "[WaitForADDomain]DscForestWait"
-        }
-#>
+        }#>
+
         xPendingReboot RebootAfterPromotion {
             Name = "RebootAfterDCPromotion"
-            DependsOn = "[xComputer]JoinDomain"
+            DependsOn = "[Script]JoinDomain"
         }
 
     }
