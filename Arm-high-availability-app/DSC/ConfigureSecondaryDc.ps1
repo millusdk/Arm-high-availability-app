@@ -78,7 +78,7 @@ configuration ConfigureSecondaryDc
         {
 	      Name = $ComputerName
           DomainName = $DomainName
-          Credential = $Credential # Credential to join to domain
+          Credential = $DomainCreds # Credential to join to domain
           DependsOn = "[xDnsServerAddress]DnsServerAddress"
         }
 
