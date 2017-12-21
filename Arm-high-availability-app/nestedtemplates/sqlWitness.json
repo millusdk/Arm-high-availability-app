@@ -189,7 +189,7 @@
       ]
     },
     {
-      "name": "RebootMachine",
+      "name": "[concat(variables('Arm-high-availability-app-sqlName'), 'RebootMachine')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-03-30",
