@@ -50,21 +50,18 @@ configuration ConfigureSecondaryDc
         {
             Ensure = "Present"
             Name = "AD-Domain-Services"
-			DependsOn = "[cDiskNoRestart]ADDataDisk"
         }
 
         WindowsFeature ADDSTools
         {
             Ensure = "Present"
             Name = "RSAT-ADDS-Tools"
-            DependsOn = "[WindowsFeature]ADDSInstall"
         }
 
         WindowsFeature ADAdminCenter
         {
             Ensure = "Present"
             Name = "RSAT-AD-AdminCenter"
-            DependsOn = "[WindowsFeature]ADDSTools"
         }
 
         xDnsServerAddress DnsServerAddress
@@ -72,18 +69,8 @@ configuration ConfigureSecondaryDc
             Address        = $DNSServer
             InterfaceAlias = $InterfaceAlias
             AddressFamily  = 'IPv4'
-            DependsOn="[WindowsFeature]ADAdminCenter"
+            DependsOn="[cDiskNoRestart]ADDataDisk"
         }
-
-		<#Script JoinDomain {
-			SetScript =
-            {
-                Add-Computer -DomainName $using:DomainName -Credential $using:Domaincreds
-            }
-            GetScript =  { @{} }
-            TestScript = { $false}
-            DependsOn = "[xDnsServerAddress]DnsServerAddress"
-		}#>
         
         xComputer JoinDomain
         {
@@ -91,9 +78,9 @@ configuration ConfigureSecondaryDc
           DomainName = $DomainName
           Credential = $DomainCreds # Credential to join to domain
           DependsOn = "[xDnsServerAddress]DnsServerAddress"
-        }#>
+        }
 
-        <#xADDomainController SecondaryDc
+        xADDomainController SecondaryDc
         {
             DomainName = $DomainName
             DomainAdministratorCredential = $Domaincreds
@@ -101,7 +88,7 @@ configuration ConfigureSecondaryDc
             DatabasePath = "F:\NTDS"
             LogPath = "F:\NTDS"
             SysvolPath = "F:\SYSVOL"
-            DependsOn = "[xDnsServerAddress]DnsServerAddress"
+            DependsOn = "[xComputer]JoinDomain"
         }
 
         <#Script UpdateDNSForwarder
@@ -124,7 +111,7 @@ configuration ConfigureSecondaryDc
 
         xPendingReboot RebootAfterPromotion {
             Name = "RebootAfterDCPromotion"
-            DependsOn = "[xComputer]JoinDomain"
+            DependsOn = "[xADDomainController]SecondaryDc"
         }
 
     }
