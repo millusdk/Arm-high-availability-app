@@ -98,58 +98,6 @@
           }
         ]
       }
-    },
-    {
-      "name": "[variables('Arm-high-availability-app-sqlName')]",
-      "type": "Microsoft.Compute/virtualMachines",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-sqlstorageName'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-availability-app-sqlNicName'))]"
-      ],
-      "tags": {
-        "displayName": "Arm-high-availability-app-sql"
-      },
-      "properties": {
-        "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('Arm-high-availability-app-sql-availability-set-name'))]"
-        },
-        "hardwareProfile": {
-          "vmSize": "[parameters('Arm-high-availability-app-sqlVmSize')]"
-        },
-        "osProfile": {
-          "computerName": "[variables('Arm-high-availability-app-sqlName')]",
-          "adminUsername": "[parameters('Arm-high-availability-app-adminUsername')]",
-          "adminPassword": "[parameters('Arm-high-availability-app-adminPassword')]"
-        },
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "[variables('Arm-high-availability-app-sqlImagePublisher')]",
-            "offer": "[variables('Arm-high-availability-app-sqlImageOffer')]",
-            "sku": "[parameters('Arm-high-availability-app-sqlWindowsOSVersion')]",
-            "version": "latest"
-          },
-          "osDisk": {
-            "name": "[variables('Arm-high-availability-app-sqlOSDiskName')]",
-            "vhd": {
-              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-sqlstorageName')), '2016-01-01').primaryEndpoints.blob, variables('Arm-high-availability-app-sqlStorageAccountContainerName'), '/', variables('Arm-high-availability-app-sqlOSDiskName'), '.vhd')]"
-            },
-            "caching": "ReadWrite",
-            "createOption": "FromImage"
-          }
-        },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-availability-app-sqlNicName'))]"
-            }
-          ]
-        }
-      },
-      "resources": [
-        
-      ]
     }
   ],
   "outputs": {}
