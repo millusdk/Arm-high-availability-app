@@ -237,6 +237,8 @@
           {
             "name": "loadBalancerFrontEnd",
             "properties": {
+              "privateIPAddress": "10.0.1.6",
+              "privateIPAllocationMethod": "Static",
               "subnet": {
                 "id": "[concat(variables('Arm-high-availability-app-vnetID'), '/subnets/', variables('Arm-high-availability-app-vnetLanName'))]"
               }
