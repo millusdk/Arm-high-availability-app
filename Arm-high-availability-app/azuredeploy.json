@@ -70,6 +70,7 @@
     "dc01TemplateFileName": "dc01.json",
     "dc02TemplateFileName": "dc02.json",
     "sqlTemplateFileName": "sql.json",
+    "sqlWitnessTemplateFile": "sqlWitness.json",
     "webTemplateFileName": "web.json"
   },
   "resources": [
