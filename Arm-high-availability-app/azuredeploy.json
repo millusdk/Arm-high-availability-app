@@ -463,7 +463,6 @@
       "apiVersion": "2016-09-01",
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
-        "[resourceId('Microsoft.Resources/deployments', 'dc02')]",
         "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-sql-availability-set-name'))]",
         "[resourceId('Microsoft.Resources/deployments', 'VnetDNSUpdate')]"
       ],
@@ -512,6 +511,64 @@
       "copy": {
         "name": "sqlcopy",
         "count": 2
+      }
+    },
+    {
+      "name": "Sql witness",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-sql-availability-set-name'))]",
+        "[resourceId('Microsoft.Resources/deployments', 'VnetDNSUpdate')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('nestedTemplatefolder'), '/', variables('sqlWitnessTemplateFile'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "Arm-high-availability-app-baseName": {
+            "value": "[variables('Arm-high-availability-app-baseName')]"
+          },
+          "Arm-high-availability-app-vnetID": {
+            "value": "[variables('Arm-high-availability-app-vnetID')]"
+          },
+          "Arm-high-availability-app-vnetLanName": {
+            "value": "[variables('Arm-high-availability-app-vnetLanName')]"
+          },
+
+          "Arm-high-availability-app-storageType": {
+            "value": "[parameters('Arm-high-availability-app-storageType')]"
+          },
+          "Arm-high-availability-app-adminUserName": {
+            "value": "[parameters('Arm-high-availability-app-adminUserName')]"
+          },
+          "Arm-high-availability-app-adminPassword": {
+            "value": "[parameters('Arm-high-availability-app-adminPassword')]"
+          },
+          "Arm-high-availability-app-sqlWindowsOSVersion": {
+            "value": "[parameters('Arm-high-availability-app-windowsOSVersion')]"
+          },
+          "Arm-high-availability-app-sqlVmSize": {
+            "value": "[parameters('Arm-high-availability-app-vmSize')]"
+          },
+
+          "Arm-high-availability-app-web-availability-set-name": {
+            "value": "[variables('Arm-high-availability-app-sql-availability-set-name')]"
+          },
+
+          "DomainName": {
+            "value": "[parameters('DomainName')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
       }
     },
     {

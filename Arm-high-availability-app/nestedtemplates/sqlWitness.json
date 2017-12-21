@@ -1,0 +1,232 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "Arm-high-availability-app-baseName": {
+      "type": "string"
+    },
+    "Arm-high-availability-app-vnetID": {
+      "type": "string"
+    },
+    "Arm-high-availability-app-vnetLanName": {
+      "type": "string"
+    },
+
+    "Arm-high-availability-app-storageType": {
+      "type": "string"
+    },
+    "Arm-high-availability-app-adminUserName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "Arm-high-availability-app-adminPassword": {
+      "type": "securestring"
+    },
+    "Arm-high-availability-app-sqlWindowsOSVersion": {
+      "type": "string"
+    },
+    "Arm-high-availability-app-sqlVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_A1_v2"
+    },
+
+    "Arm-high-availability-app-sql-availability-set-name": {
+      "type": "string"
+    },
+
+    "DomainName": {
+      "type": "string"
+    },
+
+    "_artifactsLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Auto-generated container in staging storage account to receive post-build staging folder upload"
+      }
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Auto-generated token to access _artifactsLocation"
+      }
+    }
+  },
+  "variables": {
+    "Arm-high-availability-app-sqlName": "[concat(parameters('Arm-high-availability-app-baseName'),'-', 'sql', '-', 'witness')]",
+    "Arm-high-availability-app-sqlstorageName": "[replace(concat(variables('Arm-high-availability-app-sqlName'), 'storage'), '-', '')]",
+    "Arm-high-availability-app-sqlImagePublisher": "MicrosoftWindowsServer",
+    "Arm-high-availability-app-sqlImageOffer": "WindowsServer",
+    "Arm-high-availability-app-sqlOSDiskName": "[concat(variables('Arm-high-availability-app-sqlName'), '-', 'osdisk')]",
+    "Arm-high-availability-app-sqlSubnetRef": "[concat(parameters('Arm-high-availability-app-vnetID'), '/subnets/', parameters('Arm-high-availability-app-vnetLanName'))]",
+    "Arm-high-availability-app-sqlStorageAccountContainerName": "vhds",
+    "Arm-high-availability-app-sqlNicName": "[concat(variables('Arm-high-availability-app-sqlName'), '-', 'nic01')]"
+  },
+  "resources": [
+    {
+      "name": "[variables('Arm-high-availability-app-sqlstorageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[parameters('Arm-high-availability-app-storageType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "Arm-high-availability-app-sql-storage"
+      },
+      "kind": "Storage"
+    },
+    {
+      "name": "[variables('Arm-high-availability-app-sqlNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "Arm-high-availability-app-sqlNic"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('Arm-high-availability-app-sqlSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('Arm-high-availability-app-sqlName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-sqlstorageName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-availability-app-sqlNicName'))]"
+      ],
+      "tags": {
+        "displayName": "Arm-high-availability-app-sql"
+      },
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('Arm-high-availability-app-sql-availability-set-name'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('Arm-high-availability-app-sqlVmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[variables('Arm-high-availability-app-sqlName')]",
+          "adminUsername": "[parameters('Arm-high-availability-app-adminUsername')]",
+          "adminPassword": "[parameters('Arm-high-availability-app-adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('Arm-high-availability-app-sqlImagePublisher')]",
+            "offer": "[variables('Arm-high-availability-app-sqlImageOffer')]",
+            "sku": "[parameters('Arm-high-availability-app-sqlWindowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[variables('Arm-high-availability-app-sqlOSDiskName')]",
+            "vhd": {
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('Arm-high-availability-app-sqlstorageName')), '2016-01-01').primaryEndpoints.blob, variables('Arm-high-availability-app-sqlStorageAccountContainerName'), '/', variables('Arm-high-availability-app-sqlOSDiskName'), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('Arm-high-availability-app-sqlNicName'))]"
+            }
+          ]
+        }
+      },
+      "resources": [
+        {
+          "name": "JoinDomain",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2016-03-30",
+          "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-sqlName'))]"
+          ],
+          "tags": {
+            "displayName": "JoinDomain",
+            "server": "[variables('Arm-high-availability-app-sqlName')]"
+          },
+          "properties": {
+            "publisher": "Microsoft.Powershell",
+            "type": "DSC",
+            "typeHandlerVersion": "2.9",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "configuration": {
+                "url": "[concat(parameters('_artifactsLocation'), '/DSC/DSCPackage.zip', parameters('_artifactsLocationSasToken'))]",
+                "script": "JoinDomain.ps1",
+                "function": "JoinDomain"
+              },
+              "configurationArguments": {
+                "ComputerName": "[variables('Arm-high-availability-app-sqlName')]",
+                "DomainName": "[parameters('DomainName')]"
+              }
+            },
+            "protectedSettings": {
+              "configurationArguments": {
+                "adminCreds": {
+                  "userName": "[parameters('Arm-high-availability-app-adminUserName')]",
+                  "password": "[parameters('Arm-high-availability-app-adminPassword')]"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "RebootMachine",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2016-03-30",
+          "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-sqlName'))]",
+            "[concat('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-sqlName'), 'extensions/JoinDomain')]"
+          ],
+          "tags": {
+            "displayName": "RebootMachine",
+            "server": "[variables('Arm-high-availability-app-sqlName')]"
+          },
+          "properties": {
+            "publisher": "Microsoft.Powershell",
+            "type": "DSC",
+            "typeHandlerVersion": "2.9",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "configuration": {
+                "url": "[concat(parameters('_artifactsLocation'), '/DSC/DSCPackage.zip', parameters('_artifactsLocationSasToken'))]",
+                "script": "RebootMachine.ps1",
+                "function": "RebootMachine"
+              },
+              "configurationArguments": {
+                "ComputerName": "[variables('Arm-high-availability-app-sqlName')]",
+                "DomainName": "[parameters('DomainName')]"
+              }
+            },
+            "protectedSettings": {
+              "configurationArguments": {
+                "adminCreds": {
+                  "userName": "[parameters('Arm-high-availability-app-adminUserName')]",
+                  "password": "[parameters('Arm-high-availability-app-adminPassword')]"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {}
+}
