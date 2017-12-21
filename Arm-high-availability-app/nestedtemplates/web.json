@@ -33,6 +33,9 @@
     "Arm-high-availability-app-web-availability-set-name": {
       "type": "string"
     },
+    "Arm-high-availability-app-web-loadbalancer-backend": {
+      "type": "string"
+    },
 
     "Index": {
       "type": "int"
@@ -98,7 +101,12 @@
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
                 "id": "[variables('Arm-high-availability-app-webSubnetRef')]"
-              }
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[parameters('Arm-high-availability-app-web-loadbalancer-backend')]"
+                }
+              ]
             }
           }
         ]
