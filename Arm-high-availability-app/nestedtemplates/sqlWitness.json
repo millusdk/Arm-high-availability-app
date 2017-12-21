@@ -22,9 +22,6 @@
     "Arm-high-availability-app-adminPassword": {
       "type": "securestring"
     },
-    "Arm-high-availability-app-sqlWindowsOSVersion": {
-      "type": "string"
-    },
     "Arm-high-availability-app-sqlVmSize": {
       "type": "string",
       "defaultValue": "Standard_A1_v2"
@@ -52,23 +49,24 @@
     }
   },
   "variables": {
-    "Arm-high-availability-app-sqlName": "[concat(parameters('Arm-high-availability-app-baseName'),'-', 'sql', '-', 'witness')]",
+    "Arm-high-availability-app-sqlName": "[concat(parameters('Arm-high-availability-app-baseName'),'-', 'sql', '-witness')]",
     "Arm-high-availability-app-sqlstorageName": "[replace(concat(variables('Arm-high-availability-app-sqlName'), 'storage'), '-', '')]",
-    "Arm-high-availability-app-sqlImagePublisher": "MicrosoftWindowsServer",
-    "Arm-high-availability-app-sqlImageOffer": "WindowsServer",
+    "Arm-high-availability-app-sqlImagePublisher": "MicrosoftSqlServer",
+    "Arm-high-availability-app-sqlImageOffer": "SQL2016SP1-WS2016",
     "Arm-high-availability-app-sqlOSDiskName": "[concat(variables('Arm-high-availability-app-sqlName'), '-', 'osdisk')]",
     "Arm-high-availability-app-sqlSubnetRef": "[concat(parameters('Arm-high-availability-app-vnetID'), '/subnets/', parameters('Arm-high-availability-app-vnetLanName'))]",
     "Arm-high-availability-app-sqlStorageAccountContainerName": "vhds",
-    "Arm-high-availability-app-sqlNicName": "[concat(variables('Arm-high-availability-app-sqlName'), '-', 'nic01')]"
+    "Arm-high-availability-app-sqlNicName": "[concat(variables('Arm-high-availability-app-sqlName'), '-', 'nic01')]",
+    "Arm-high-availability-app-sqlWindowsOSVersion": "SQLDEV"
   },
   "resources": [
     {
-      "name": "AAA",
+      "name": "[variables('Arm-high-availability-app-sqlstorageName')]",
       "type": "Microsoft.Storage/storageAccounts",
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-01-01",
       "sku": {
-        "name": "Standard_LRS"
+        "name": "[parameters('Arm-high-availability-app-storageType')]"
       },
       "dependsOn": [],
       "tags": {

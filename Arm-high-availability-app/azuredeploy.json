@@ -549,9 +549,6 @@
           "Arm-high-availability-app-adminPassword": {
             "value": "[parameters('Arm-high-availability-app-adminPassword')]"
           },
-          "Arm-high-availability-app-sqlWindowsOSVersion": {
-            "value": "[parameters('Arm-high-availability-app-windowsOSVersion')]"
-          },
           "Arm-high-availability-app-sqlVmSize": {
             "value": "[parameters('Arm-high-availability-app-vmSize')]"
           },
