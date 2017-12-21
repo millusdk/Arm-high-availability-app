@@ -63,7 +63,7 @@
   },
   "resources": [
     {
-      "name": "[variables('Arm-high-availability-app-sqlstorageName')]",
+      "name": "AAA",
       "type": "Microsoft.Storage/storageAccounts",
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-01-01",
