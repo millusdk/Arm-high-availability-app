@@ -556,7 +556,7 @@
             "value": "[parameters('Arm-high-availability-app-vmSize')]"
           },
 
-          "Arm-high-availability-app-web-availability-set-name": {
+          "Arm-high-availability-app-sql-availability-set-name": {
             "value": "[variables('Arm-high-availability-app-sql-availability-set-name')]"
           },
 
