@@ -49,7 +49,7 @@
     }
   },
   "variables": {
-    "Arm-high-availability-app-sqlName": "[concat(parameters('Arm-high-availability-app-baseName'),'-', 'sql', '-witness')]",
+    "Arm-high-availability-app-sqlName": "[concat(parameters('Arm-high-availability-app-baseName'),'-', 'sql', 'w')]",
     "Arm-high-availability-app-sqlstorageName": "[replace(concat(variables('Arm-high-availability-app-sqlName'), 'storage'), '-', '')]",
     "Arm-high-availability-app-sqlImagePublisher": "MicrosoftSqlServer",
     "Arm-high-availability-app-sqlImageOffer": "SQL2016SP1-WS2016",
