@@ -62,43 +62,7 @@
     "Arm-high-availability-app-sqlNicName": "[concat(variables('Arm-high-availability-app-sqlName'), '-', 'nic01')]"
   },
   "resources": [
-    {
-      "name": "[variables('Arm-high-availability-app-sqlstorageName')]",
-      "type": "Microsoft.Storage/storageAccounts",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2016-01-01",
-      "sku": {
-        "name": "[parameters('Arm-high-availability-app-storageType')]"
-      },
-      "dependsOn": [],
-      "tags": {
-        "displayName": "Arm-high-availability-app-sql-storage"
-      },
-      "kind": "Storage"
-    },
-    {
-      "name": "[variables('Arm-high-availability-app-sqlNicName')]",
-      "type": "Microsoft.Network/networkInterfaces",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2016-03-30",
-      "dependsOn": [],
-      "tags": {
-        "displayName": "Arm-high-availability-app-sqlNic"
-      },
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "subnet": {
-                "id": "[variables('Arm-high-availability-app-sqlSubnetRef')]"
-              }
-            }
-          }
-        ]
-      }
-    }
+    
   ],
   "outputs": {}
 }
