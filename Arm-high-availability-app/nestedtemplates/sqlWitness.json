@@ -193,7 +193,7 @@
           "apiVersion": "2016-03-30",
           "dependsOn": [
             "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-sqlName'))]",
-            "[concat('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-sqlName'), 'extensions/JoinDomain')]"
+            "[concat('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-sqlName'), '/extensions/JoinDomain')]"
           ],
           "tags": {
             "displayName": "RebootMachine",
