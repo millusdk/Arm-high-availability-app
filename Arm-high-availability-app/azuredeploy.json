@@ -452,7 +452,7 @@
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
         "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-web-availability-set-name'))]",
         "[resourceId('Microsoft.Resources/deployments', 'VnetDNSUpdate')]",
-        "[resourceId('Microsoft.Network/publicIPAddresses', variables('Arm-high-availability-app-web-loadbalancer'))]"
+        "[resourceId('Microsoft.Network/loadbalancers', variables('Arm-high-availability-app-web-loadbalancer'))]"
       ],
       "properties": {
         "mode": "Incremental",
