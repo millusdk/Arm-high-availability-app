@@ -68,7 +68,7 @@
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-01-01",
       "sku": {
-        "name": "[parameters('Arm-high-availability-app-storageType')]"
+        "name": "Standard_LRS"
       },
       "dependsOn": [],
       "tags": {
