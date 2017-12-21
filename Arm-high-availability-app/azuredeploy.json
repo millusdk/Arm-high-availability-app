@@ -58,6 +58,9 @@
     "Arm-high-availability-app-sql-availability-set-name": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'sql', '-', 'availabilitySet')]",
     "Arm-high-availability-app-web-availability-set-name": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'web', '-', 'availabilitySet')]",
 
+    "Arm-high-availability-app-sql-loadbalancer": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'sql', '-', 'loadbalancer')]",
+    "Arm-high-availability-app-sql-loadbalancer-backend": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('Arm-high-availability-app-sql-loadbalancer')), '/backendAddressPools/BackendPool')]",
+
     "Arm-high-availability-app-web-loadbalancer": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'web', '-', 'loadbalancer')]",
     "Arm-high-availability-app-web-loadbalancer-backend": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('Arm-high-availability-app-web-loadbalancer')), '/backendAddressPools/BackendPool')]",
     "Arm-high-availability-app-web-loadbalancer-ip-name": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'web', '-', 'loadbalancer-ip')]",
@@ -214,6 +217,66 @@
               "idleTimeoutInMinutes": 15
             }
 
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "name": "[variables('Arm-high-availability-app-web-loadbalancer')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Sql loadbalancer"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('Arm-high-availability-app-vnetName'))]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "loadBalancerFrontEnd",
+            "properties": {
+              "subnet": {
+                "id": "[concat(variables('Arm-high-availability-app-vnetID'), '/subnets/', variables('Arm-high-availability-app-vnetLanName'))]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "loadBalancerBackEnd"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('Arm-high-availability-app-web-loadbalancer')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('Arm-high-availability-app-web-loadbalancer')), '/backendAddressPools/loadBalancerBackEnd')]"
+              },
+              "probe": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('Arm-high-availability-app-web-loadbalancer')), '/probes/sqlProbe')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 1433,
+              "backendPort": 1433,
+              "enableFloatingIP": true
+            },
+            "name": "lbrule"
+          }
+        ],
+        "probes": [
+          {
+            "name": "sqlProbe",
+            "properties": {
+              "protocol": "tcp",
+              "port": 59999,
+              "intervalInSeconds": "5",
+              "numberOfProbes": "2"
+            }
           }
         ]
       }
@@ -431,9 +494,14 @@
           "Arm-high-availability-app-sqlVmSize": {
             "value": "[parameters('Arm-high-availability-app-vmSize')]"
           },
+
           "Arm-high-availability-app-sql-availability-set-name": {
             "value": "[variables('Arm-high-availability-app-sql-availability-set-name')]"
           },
+          "Arm-high-availability-app-sql-loadbalancer-backend": {
+            "value": "[variables('Arm-high-availability-app-sql-loadbalancer-backend')]"
+          },
+
           "Index": {
             "value": "[copyIndex(1)]"
           }

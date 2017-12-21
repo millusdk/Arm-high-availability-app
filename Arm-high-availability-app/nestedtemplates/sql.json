@@ -30,6 +30,9 @@
     "Arm-high-availability-app-sql-availability-set-name": {
       "type": "string"
     },
+    "Arm-high-availability-app-sql-loadbalancer-backend": {
+      "type": "string"
+    },
 
     "Index": {
       "type": "int"
@@ -79,7 +82,12 @@
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
                 "id": "[variables('Arm-high-availability-app-sqlSubnetRef')]"
-              }
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[parameters('Arm-high-availability-app-sql-loadbalancer-backend')]"
+                }
+              ]
             }
           }
         ]
