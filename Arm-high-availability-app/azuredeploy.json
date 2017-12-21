@@ -223,7 +223,7 @@
     },
     {
       "apiVersion": "2015-06-15",
-      "name": "[variables('Arm-high-availability-app-web-loadbalancer')]",
+      "name": "[variables('Arm-high-availability-app-sql-loadbalancer')]",
       "type": "Microsoft.Network/loadBalancers",
       "location": "[resourceGroup().location]",
       "tags": {
@@ -272,7 +272,7 @@
           {
             "name": "sqlProbe",
             "properties": {
-              "protocol": "tcp",
+              "protocol": "Tcp",
               "port": 59999,
               "intervalInSeconds": "5",
               "numberOfProbes": "2"
@@ -585,11 +585,11 @@
 
   "outputs": 
   {
-    "dc01": {
+    "webLb": {
       "type": "object",
       "value": {
-        "baseName": "[variables('Arm-high-availability-app-baseName')]"
+        "ip": "[reference(variables('Arm-high-availability-app-web-loadbalancer-ip-name')).properties.ipAddress]"
       }
-    }
+    } 
   }
 }
