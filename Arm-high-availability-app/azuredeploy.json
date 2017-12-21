@@ -252,13 +252,13 @@
           {
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('Arm-high-availability-app-web-loadbalancer')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('Arm-high-availability-app-sql-loadbalancer')), '/frontendIpConfigurations/loadBalancerFrontEnd')]"
               },
               "backendAddressPool": {
-                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('Arm-high-availability-app-web-loadbalancer')), '/backendAddressPools/loadBalancerBackEnd')]"
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('Arm-high-availability-app-sql-loadbalancer')), '/backendAddressPools/loadBalancerBackEnd')]"
               },
               "probe": {
-                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('Arm-high-availability-app-web-loadbalancer')), '/probes/sqlProbe')]"
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('Arm-high-availability-app-sql-loadbalancer')), '/probes/sqlProbe')]"
               },
               "protocol": "Tcp",
               "frontendPort": 1433,
