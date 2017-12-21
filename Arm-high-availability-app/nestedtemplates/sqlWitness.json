@@ -185,47 +185,47 @@
               }
             }
           }
-        },
-        {
-          "name": "RebootMachine",
-          "type": "extensions",
-          "location": "[resourceGroup().location]",
-          "apiVersion": "2016-03-30",
-          "dependsOn": [
-            "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-sqlName'))]",
-            "[concat('Microsoft.Compute/virtualMachines', '/', variables('Arm-high-availability-app-sqlName'), '/extensions/JoinDomain')]"
-          ],
-          "tags": {
-            "displayName": "RebootMachine",
-            "server": "[variables('Arm-high-availability-app-sqlName')]"
+        }
+      ]
+    },
+    {
+      "name": "RebootMachine",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', variables('Arm-high-availability-app-sqlName'))]",
+        "[concat('Microsoft.Compute/virtualMachines', '/', variables('Arm-high-availability-app-sqlName'), '/extensions/JoinDomain')]"
+      ],
+      "tags": {
+        "displayName": "RebootMachine",
+        "server": "[variables('Arm-high-availability-app-sqlName')]"
+      },
+      "properties": {
+        "publisher": "Microsoft.Powershell",
+        "type": "DSC",
+        "typeHandlerVersion": "2.9",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "configuration": {
+            "url": "[concat(parameters('_artifactsLocation'), '/DSC/DSCPackage.zip', parameters('_artifactsLocationSasToken'))]",
+            "script": "RebootMachine.ps1",
+            "function": "RebootMachine"
           },
-          "properties": {
-            "publisher": "Microsoft.Powershell",
-            "type": "DSC",
-            "typeHandlerVersion": "2.9",
-            "autoUpgradeMinorVersion": true,
-            "settings": {
-              "configuration": {
-                "url": "[concat(parameters('_artifactsLocation'), '/DSC/DSCPackage.zip', parameters('_artifactsLocationSasToken'))]",
-                "script": "RebootMachine.ps1",
-                "function": "RebootMachine"
-              },
-              "configurationArguments": {
-                "ComputerName": "[variables('Arm-high-availability-app-sqlName')]",
-                "DomainName": "[parameters('DomainName')]"
-              }
-            },
-            "protectedSettings": {
-              "configurationArguments": {
-                "adminCreds": {
-                  "userName": "[parameters('Arm-high-availability-app-adminUserName')]",
-                  "password": "[parameters('Arm-high-availability-app-adminPassword')]"
-                }
-              }
+          "configurationArguments": {
+            "ComputerName": "[variables('Arm-high-availability-app-sqlName')]",
+            "DomainName": "[parameters('DomainName')]"
+          }
+        },
+        "protectedSettings": {
+          "configurationArguments": {
+            "adminCreds": {
+              "userName": "[parameters('Arm-high-availability-app-adminUserName')]",
+              "password": "[parameters('Arm-high-availability-app-adminPassword')]"
             }
           }
         }
-      ]
+      }
     }
   ],
   "outputs": {}
