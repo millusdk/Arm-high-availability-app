@@ -60,6 +60,7 @@
 
     "Arm-high-availability-app-web-loadbalancer": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'web', '-', 'loadbalancer')]",
     "Arm-high-availability-app-web-loadbalancer-backend": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('Arm-high-availability-app-web-loadbalancer')), '/backendAddressPools/BackendPool')]",
+    "Arm-high-availability-app-web-loadbalancer-ip-name": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'web', '-', 'loadbalancer-ip')]",
 
     "nestedTemplatefolder": "nestedtemplates",
 
@@ -98,6 +99,18 @@
             }
           }
         ]
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('Arm-high-availability-app-web-loadbalancer-ip-name')]",
+      "tags": {
+        "displayName": "Web loadbalancer ip"
+      },
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic"
       }
     },
 
@@ -152,11 +165,17 @@
       "tags": {
         "displayName": "Web loadbalancer"
       },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('Arm-high-availability-app-web-loadbalancer-ip-name'))]"
+      ],
       "properties": {
         "frontendIPConfigurations": [
           {
             "name": "LoadBalancerFrontend",
             "properties": {
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('Arm-high-availability-app-web-loadbalancer-ip-name'))]"
+              }
             }
           }
         ],
@@ -431,9 +450,9 @@
       "apiVersion": "2016-09-01",
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
-        "[resourceId('Microsoft.Resources/deployments', 'dc02')]",
         "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-web-availability-set-name'))]",
-        "[resourceId('Microsoft.Resources/deployments', 'VnetDNSUpdate')]"
+        "[resourceId('Microsoft.Resources/deployments', 'VnetDNSUpdate')]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('Arm-high-availability-app-web-loadbalancer'))]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -495,7 +514,9 @@
       }
     }
   ],
-  "outputs": {
+
+  "outputs": 
+  {
     "dc01": {
       "type": "object",
       "value": {
