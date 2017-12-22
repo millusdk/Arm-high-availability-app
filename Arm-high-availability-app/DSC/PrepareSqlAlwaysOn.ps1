@@ -40,7 +40,7 @@ configuration PrepareSqlAlwaysOn
         $RebootVirtualMachine = $true
     }
 
-    <#WaitForSqlSetup#>
+    WaitForSqlSetup
 
     Node localhost
     {
@@ -203,7 +203,7 @@ function Get-NetBIOSName
         }
     }
 }
-<#function WaitForSqlSetup
+function WaitForSqlSetup
 {
     # Wait for SQL Server Setup to finish before proceeding.
     while ($true)
@@ -219,4 +219,3 @@ function Get-NetBIOSName
         }
     }
 }
-#>
