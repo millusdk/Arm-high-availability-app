@@ -40,11 +40,11 @@ configuration PrepareSqlAlwaysOn
         $RebootVirtualMachine = $true
     }
 
-    WaitForSqlSetup
+    <#WaitForSqlSetup#>
 
     Node localhost
     {
-        xSqlCreateVirtualDisk CreateVirtualDisk
+        <#xSqlCreateVirtualDisk CreateVirtualDisk
         {
             DriveSize = $NumberOfDisks
             NumberOfColumns = $NumberOfDisks
@@ -171,7 +171,7 @@ configuration PrepareSqlAlwaysOn
             LogPath = "F:\LOG"
             DomainAdministratorCredential = $DomainFQDNCreds
             DependsOn = "[xSqlLogin]AddSqlServerServiceAccountToSysadminServerRole"
-        }
+        }#>
 
         LocalConfigurationManager 
         {
@@ -203,7 +203,7 @@ function Get-NetBIOSName
         }
     }
 }
-function WaitForSqlSetup
+<#function WaitForSqlSetup
 {
     # Wait for SQL Server Setup to finish before proceeding.
     while ($true)
@@ -219,3 +219,4 @@ function WaitForSqlSetup
         }
     }
 }
+#>
