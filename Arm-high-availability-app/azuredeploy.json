@@ -653,7 +653,7 @@
     "webLb": {
       "type": "object",
       "value": {
-        "ip": "[reference(variables('Arm-high-availability-app-web-loadbalancer-ip-name')).properties.ipAddress]"
+        "ip": "[reference(variables('Arm-high-availability-app-web-loadbalancer-ip-name'))]"
       }
     } 
   }
