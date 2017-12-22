@@ -65,8 +65,8 @@
     "Arm-high-availability-app-web-loadbalancer-backend": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('Arm-high-availability-app-web-loadbalancer')), '/backendAddressPools/BackendPool')]",
     "Arm-high-availability-app-web-loadbalancer-ip-name": "[concat(variables('Arm-high-availability-app-baseName'), '-', 'web', '-', 'loadbalancer-ip')]",
 
-    "Arm-high-availability-app-sql-count":  2, 
-    "Arm-high-availability-app-web-count":  2, 
+    "Arm-high-availability-app-sql-count": 2,
+    "Arm-high-availability-app-web-count": 2,
 
     "nestedTemplatefolder": "nestedtemplates",
 
@@ -120,7 +120,6 @@
         "publicIPAllocationMethod": "Dynamic"
       }
     },
-
     {
       "name": "[variables('Arm-high-availability-app-dc-availability-set-name')]",
       "type": "Microsoft.Compute/availabilitySets",
@@ -163,7 +162,6 @@
         "platformFaultDomainCount": 3
       }
     },
-
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/loadBalancers",
@@ -287,7 +285,6 @@
         ]
       }
     },
-
     {
       "name": "dc01",
       "type": "Microsoft.Resources/deployments",
@@ -461,7 +458,6 @@
         }
       }
     },
-
     {
       "name": "SqlWitness",
       "type": "Microsoft.Resources/deployments",
@@ -648,16 +644,57 @@
         "name": "webcopy",
         "count": "[int(variables('Arm-high-availability-app-web-count'))]"
       }
+    },
+    {
+      "name": "PrepareSqlAo",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
+        "[resourceId('Microsoft.Resources/deployments', 'dc02')]",
+        "[resourceId('Microsoft.Resources/deployments', 'sql01')]",
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-web-availability-set-name'))]",
+        "[resourceId('Microsoft.Resources/deployments', 'VnetDNSUpdate')]",
+        "[resourceId('Microsoft.Network/loadbalancers', variables('Arm-high-availability-app-web-loadbalancer'))]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('nestedTemplatefolder'), '/', variables('prepareSqlAoTemplateFile'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "Arm-high-availability-app-sqlName": {
+            "value": "[concat(variables('Arm-high-availability-app-baseName'), '-sql01')]"
+          },
+          "Arm-high-availability-app-adminUserName": {
+            "value": "[parameters('Arm-high-availability-app-adminUserName')]"
+          },
+          "Arm-high-availability-app-adminPassword": {
+            "value": "[parameters('Arm-high-availability-app-adminPassword')]"
+          },
+
+          "DomainName": {
+            "value": "[parameters('DomainName')]"
+          },
+
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
+      }
     }
   ],
 
-  "outputs": 
-  {
+  "outputs": {
     "webLb": {
       "type": "object",
       "value": {
         "ip": "[reference(variables('Arm-high-availability-app-web-loadbalancer-ip-name'))]"
       }
-    } 
+    }
   }
 }

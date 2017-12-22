@@ -1,0 +1,74 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "Arm-high-availability-app-sqlName": {
+      "type": "string"
+    },
+    "Arm-high-availability-app-adminUserName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "Arm-high-availability-app-adminPassword": {
+      "type": "securestring"
+    },
+
+    "DomainName": {
+      "type": "string"
+    },
+
+    "_artifactsLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Auto-generated container in staging storage account to receive post-build staging folder upload"
+      }
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Auto-generated token to access _artifactsLocation"
+      }
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('Arm-high-availability-app-sqlName'), '/sqlAOPrepare')]",
+      "apiVersion": "2016-03-30",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [],
+      "properties": {
+        "publisher": "Microsoft.Powershell",
+        "type": "DSC",
+        "typeHandlerVersion": "2.19",
+        "autoUpgradeMinorVersion": false,
+        "settings": {
+          "configuration": {
+            "url": "[concat(parameters('_artifactsLocation'), '/DSC/DSCPackage.zip', parameters('_artifactsLocationSasToken'))]",
+            "script": "PrepareSqlAlwaysOn.ps1",
+            "function": "PrepareSqlAlwaysOn"
+          },
+          "configurationArguments": {
+            "DomainName": "[parameters('DomainName')]",
+            "sqlAlwaysOnEndpointName": "Ahaa-test-hadr",
+            "NumberOfDisks": "2",
+            "WorkloadType": "General"
+          }
+        },
+        "protectedSettings": {
+          "configurationArguments": {
+            "adminCreds": {
+              "userName": "[parameters('Arm-high-availability-app-adminUserName')]",
+              "password": "[parameters('Arm-high-availability-app-adminPassword')]"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+
+  }
+}
