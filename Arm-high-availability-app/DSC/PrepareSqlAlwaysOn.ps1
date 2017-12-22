@@ -44,7 +44,7 @@ configuration PrepareSqlAlwaysOn
 
     Node localhost
     {
-        <#xSqlCreateVirtualDisk CreateVirtualDisk
+        xSqlCreateVirtualDisk CreateVirtualDisk
         {
             DriveSize = $NumberOfDisks
             NumberOfColumns = $NumberOfDisks
@@ -53,7 +53,7 @@ configuration PrepareSqlAlwaysOn
             RebootVirtualMachine = $RebootVirtualMachine
         }
 
-        WindowsFeature FC
+        <#WindowsFeature FC
         {
             Name = "Failover-Clustering"
             Ensure = "Present"
