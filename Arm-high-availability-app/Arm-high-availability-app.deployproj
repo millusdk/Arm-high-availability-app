@@ -39,8 +39,7 @@
     <None Include="DSC\cDisk\DSCResources\SAMPLE_cDiskNoRestart\SAMPLE_cDiskNoRestart.schema.mof" />
     <None Include="DSC\ConfigureSecondaryDc.ps1" />
     <None Include="DSC\CreateAdForest.ps1" />
-    <None Include="DSC\JoinDomain.ps1" />
-    <None Include="DSC\RebootMachine.ps1" />
+    <None Include="DSC\PrepareWitness.ps1" />
     <None Include="DSC\xActiveDirectory\DSCResources\MSFT_xADCommon\MSFT_xADCommon.ps1" />
     <None Include="DSC\xActiveDirectory\DSCResources\MSFT_xADCommon\MSFT_xADCommon.psm1" />
     <None Include="DSC\xActiveDirectory\DSCResources\MSFT_xADDomainController\MSFT_xADDomainController.psm1" />
@@ -136,6 +135,15 @@
     <None Include="DSC\xDisk\PSGetModuleInfo.xml" />
     <None Include="DSC\xDisk\xDisk.psd1" />
     <None Include="DSC\xDisk\xDisk_Documentation.html" />
+    <None Include="DSC\xFailOverCluster\DSCResources\MicrosoftAzure_xClusterQuorum\MicrosoftAzure_xClusterQuorum.psm1" />
+    <None Include="DSC\xFailOverCluster\DSCResources\MicrosoftAzure_xClusterQuorum\MicrosoftAzure_xClusterQuorum.schema.mof" />
+    <None Include="DSC\xFailOverCluster\DSCResources\MicrosoftAzure_xCluster\MicrosoftAzure_xCluster.psm1" />
+    <None Include="DSC\xFailOverCluster\DSCResources\MicrosoftAzure_xCluster\MicrosoftAzure_xCluster.schema.mof" />
+    <None Include="DSC\xFailOverCluster\DSCResources\MicrosoftAzure_xWaitForCluster\MicrosoftAzure_xWaitForCluster.psm1" />
+    <None Include="DSC\xFailOverCluster\DSCResources\MicrosoftAzure_xWaitForCluster\MicrosoftAzure_xWaitForCluster.schema.mof" />
+    <None Include="DSC\xFailOverCluster\DSCResources\MicrosoftAzure_xWaitForFileShareWitness\MicrosoftAzure_xWaitForFileShareWitness.psm1" />
+    <None Include="DSC\xFailOverCluster\DSCResources\MicrosoftAzure_xWaitForFileShareWitness\MicrosoftAzure_xWaitForFileShareWitness.schema.mof" />
+    <None Include="DSC\xFailOverCluster\xFailOverCluster.psd1" />
     <None Include="DSC\xNetworking\DSCResources\MSFT_xDNSServerAddress\MSFT_xDNSServerAddress.psm1" />
     <None Include="DSC\xNetworking\DSCResources\MSFT_xDNSServerAddress\MSFT_xDNSServerAddress.schema.mof" />
     <None Include="DSC\xNetworking\DSCResources\MSFT_xFirewall\MSFT_xFirewall.psm1" />
@@ -155,6 +163,9 @@
     <None Include="DSC\xPendingReboot\DSCResources\MSFT_xPendingReboot\MSFT_xPendingReboot.schema.mof" />
     <None Include="DSC\xPendingReboot\xPendingReboot.psd1" />
     <None Include="DSC\xPendingReboot\xPendingReboot_Documentation.html" />
+    <None Include="DSC\xSmbShare\DscResources\MSFT_xSmbShare\MSFT_xSmbShare.psm1" />
+    <None Include="DSC\xSmbShare\DscResources\MSFT_xSmbShare\MSFT_xSmbShare.schema.mof" />
+    <None Include="DSC\xSmbShare\xSmbShare.psd1" />
     <None Include="Ensure-DeployStorageAccountExists.ps1" />
     <None Include="nestedtemplates\sqlWitness.json" />
     <None Include="nestedtemplates\web.json" />
