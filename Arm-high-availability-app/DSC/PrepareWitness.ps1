@@ -8,6 +8,9 @@ Configuration PrepareWitness
 
         [Parameter(Mandatory)]
         [String]$DomainName,
+		
+		[Parameter(Mandatory)]
+        [String]$SharePath,
 
         [Parameter(Mandatory)]
         [System.Management.Automation.PSCredential]$Admincreds,
@@ -16,7 +19,7 @@ Configuration PrepareWitness
         [Int]$RetryIntervalSec=60
     )
 
-Import-DscResource -ModuleName xSmbShare, xDisk, cDisk, xComputerManagement, xPendingReboot, xActiveDirectory, PSDesiredStateConfiguration
+	Import-DscResource -ModuleName xSmbShare, xDisk, cDisk, xComputerManagement, xPendingReboot, xActiveDirectory, PSDesiredStateConfiguration
 
 	[System.Management.Automation.PSCredential ]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
 

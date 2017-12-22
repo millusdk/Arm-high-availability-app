@@ -185,7 +185,8 @@
               },
               "configurationArguments": {
                 "ComputerName": "[variables('Arm-high-availability-app-sqlName')]",
-                "DomainName": "[parameters('DomainName')]"
+                "DomainName": "[parameters('DomainName')]",
+                "SharePath" :  "SqlShare"
               }
             },
             "protectedSettings": {

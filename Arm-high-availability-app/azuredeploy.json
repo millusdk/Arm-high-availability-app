@@ -458,62 +458,7 @@
         }
       }
     },
-    {
-      "name": "[concat('sql', padLeft(copyIndex(1), 2, '0'))]",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-09-01",
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
-        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-sql-availability-set-name'))]",
-        "[resourceId('Microsoft.Resources/deployments', 'VnetDNSUpdate')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('nestedTemplatefolder'), '/', variables('sqlTemplateFileName'), parameters('_artifactsLocationSasToken'))]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "Arm-high-availability-app-baseName": {
-            "value": "[variables('Arm-high-availability-app-baseName')]"
-          },
-          "Arm-high-availability-app-vnetID": {
-            "value": "[variables('Arm-high-availability-app-vnetID')]"
-          },
-          "Arm-high-availability-app-vnetLanName": {
-            "value": "[variables('Arm-high-availability-app-vnetLanName')]"
-          },
 
-          "Arm-high-availability-app-storageType": {
-            "value": "[parameters('Arm-high-availability-app-storageType')]"
-          },
-          "Arm-high-availability-app-adminUserName": {
-            "value": "[parameters('Arm-high-availability-app-adminUserName')]"
-          },
-          "Arm-high-availability-app-adminPassword": {
-            "value": "[parameters('Arm-high-availability-app-adminPassword')]"
-          },
-          "Arm-high-availability-app-sqlVmSize": {
-            "value": "[parameters('Arm-high-availability-app-vmSize')]"
-          },
-
-          "Arm-high-availability-app-sql-availability-set-name": {
-            "value": "[variables('Arm-high-availability-app-sql-availability-set-name')]"
-          },
-          "Arm-high-availability-app-sql-loadbalancer-backend": {
-            "value": "[variables('Arm-high-availability-app-sql-loadbalancer-backend')]"
-          },
-
-          "Index": {
-            "value": "[copyIndex(1)]"
-          }
-        }
-      },
-      "copy": {
-        "name": "sqlcopy",
-        "count": 2
-      }
-    },
     {
       "name": "SqlWitness",
       "type": "Microsoft.Resources/deployments",
@@ -570,6 +515,63 @@
             "value": "[parameters('_artifactsLocationSasToken')]"
           }
         }
+      }
+    },
+    {
+      "name": "[concat('sql', padLeft(copyIndex(1), 2, '0'))]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'dc01')]",
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('Arm-high-availability-app-sql-availability-set-name'))]",
+        "[resourceId('Microsoft.Resources/deployments', 'VnetDNSUpdate')]",
+        "[resourceId('Microsoft.Resources/deployments', 'sqlWitness')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/', variables('nestedTemplatefolder'), '/', variables('sqlTemplateFileName'), parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "Arm-high-availability-app-baseName": {
+            "value": "[variables('Arm-high-availability-app-baseName')]"
+          },
+          "Arm-high-availability-app-vnetID": {
+            "value": "[variables('Arm-high-availability-app-vnetID')]"
+          },
+          "Arm-high-availability-app-vnetLanName": {
+            "value": "[variables('Arm-high-availability-app-vnetLanName')]"
+          },
+
+          "Arm-high-availability-app-storageType": {
+            "value": "[parameters('Arm-high-availability-app-storageType')]"
+          },
+          "Arm-high-availability-app-adminUserName": {
+            "value": "[parameters('Arm-high-availability-app-adminUserName')]"
+          },
+          "Arm-high-availability-app-adminPassword": {
+            "value": "[parameters('Arm-high-availability-app-adminPassword')]"
+          },
+          "Arm-high-availability-app-sqlVmSize": {
+            "value": "[parameters('Arm-high-availability-app-vmSize')]"
+          },
+
+          "Arm-high-availability-app-sql-availability-set-name": {
+            "value": "[variables('Arm-high-availability-app-sql-availability-set-name')]"
+          },
+          "Arm-high-availability-app-sql-loadbalancer-backend": {
+            "value": "[variables('Arm-high-availability-app-sql-loadbalancer-backend')]"
+          },
+
+          "Index": {
+            "value": "[copyIndex(1)]"
+          }
+        }
+      },
+      "copy": {
+        "name": "sqlcopy",
+        "count": 2
       }
     },
     {
