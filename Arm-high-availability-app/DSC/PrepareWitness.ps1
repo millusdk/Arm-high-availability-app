@@ -51,13 +51,6 @@ Node localhost
         Ensure = "Present"
     }
 
-	xComputer JoinDomain
-    {
-	  Name = $ComputerName
-      DomainName = $DomainName
-      Credential = $DomainCreds # Credential to join to domain
-    }
-
 	File FSWFolder
     {
         DestinationPath = "F:\$($SharePath.ToUpperInvariant())"
@@ -73,6 +66,13 @@ Node localhost
         FullAccess = "BUILTIN\Administrators"
         Ensure = "Present"
         DependsOn = "[File]FSWFolder"
+    }
+
+	xComputer JoinDomain
+    {
+	  Name = $ComputerName
+      DomainName = $DomainName
+      Credential = $DomainCreds # Credential to join to domain
     }
 
 	xPendingReboot Reboot
