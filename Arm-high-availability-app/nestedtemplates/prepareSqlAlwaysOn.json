@@ -53,7 +53,7 @@
           "configurationArguments": {
             "DomainName": "[parameters('DomainName')]",
             "sqlAlwaysOnEndpointName": "Ahaa-test-hadr",
-            "NumberOfDisks": "2",
+            "NumberOfDisks": 2,
             "WorkloadType": "General"
           }
         },
