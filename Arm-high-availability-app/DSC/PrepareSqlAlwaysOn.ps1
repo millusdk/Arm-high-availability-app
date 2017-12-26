@@ -44,16 +44,16 @@ configuration PrepareSqlAlwaysOn
 
     Node localhost
     {
-        xSqlCreateVirtualDisk CreateVirtualDisk
+        <#xSqlCreateVirtualDisk CreateVirtualDisk
         {
             DriveSize = $NumberOfDisks
             NumberOfColumns = $NumberOfDisks
             BytesPerDisk = 1099511627776
             OptimizationType = $WorkloadType
             RebootVirtualMachine = $RebootVirtualMachine
-        }
+        }#>
 
-        <#WindowsFeature FC
+        WindowsFeature FC
         {
             Name = "Failover-Clustering"
             Ensure = "Present"
@@ -77,15 +77,6 @@ configuration PrepareSqlAlwaysOn
             Name = "RSAT-AD-PowerShell"
             Ensure = "Present"
         }
-
-        xWaitForADDomain DscForestWait 
-        { 
-            DomainName = $DomainName 
-            DomainUserCredential= $DomainCreds
-            RetryCount = $RetryCount 
-            RetryIntervalSec = $RetryIntervalSec 
-	        DependsOn = "[WindowsFeature]ADPS"
-        }
         
         xComputer DomainJoin
         {
@@ -95,7 +86,7 @@ configuration PrepareSqlAlwaysOn
 	        DependsOn = "[xWaitForADDomain]DscForestWait"
         }
 
-        xFirewall DatabaseEngineFirewallRule
+        <#xFirewall DatabaseEngineFirewallRule
         {
             Direction = "Inbound"
             Name = "SQL-Server-Database-Engine-TCP-In"
